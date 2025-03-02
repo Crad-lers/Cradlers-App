@@ -44,9 +44,9 @@ class HomeScreen extends StatelessWidget {
               SizedBox(height: 20),  // Space between the first and second button
               ElevatedButton(
                 onPressed: () {
-                  Navigator.pushNamed(context, '/thankyou');
+                  Navigator.pushNamed(context, '/#');
                 },
-                child: const Text('Thank You Page'),
+                child: const Text('Add new device'),
               ),
             ],
           ),
