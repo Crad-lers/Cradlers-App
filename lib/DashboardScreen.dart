@@ -1,3 +1,4 @@
+import 'package:cradlers2/health_screen.dart';
 import 'package:cradlers2/play_music_screen.dart';
 import 'package:cradlers2/settings_page.dart';
 import 'package:cradlers2/swing_control_screen.dart';
@@ -108,7 +109,10 @@ class DashboardScreen extends StatelessWidget {
                     childAspectRatio: 1,
                     children: [
                       _buildDashboardButton("Health", Icons.favorite, () {
-                        print("Health Clicked");
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => HealthScreen()),
+                        );
                       }),
                       _buildDashboardButton("Camera", Icons.videocam, () {
                         print("Camera Clicked");
