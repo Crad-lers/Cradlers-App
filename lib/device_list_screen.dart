@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'DashboardScreen.dart';
+
 class DeviceListScreen extends StatelessWidget {
   const DeviceListScreen({super.key});
 
@@ -21,12 +23,18 @@ class DeviceListScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             ElevatedButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => DashboardScreen()),
+                );
+              },
               child: const Text('Gen 1 Cradlers cradle'),
             ),
             const SizedBox(height: 50),
             ElevatedButton(
-              onPressed: () {},
+              onPressed: () {
+              },
               child: const Text('Gen 1 Cradlers cradle 2'),
             ),
             const SizedBox(height: 50),
