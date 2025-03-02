@@ -55,16 +55,11 @@ Please make sure to update tests as appropriate.
 [MIT](https://choosealicense.com/licenses/mit/)
 
 ## Contact
-For support or queries, please email us at [support@cradlers.com](mailto:support@cradlers.com).
+For support or queries, please email us at [sdgpcs77@gmail.com](mailto:sdgpcs77@gmail.com).
 
 ## Acknowledgments
 - Thanks to all contributors who have helped shape this project.
 - Special thanks to Flutter community for their continuous support.
 ```
 
-### Points to Consider
-- **Repository URL**: Replace `https://your-repository-url.git` with the actual URL to your Git repository.
-- **Contact Email**: Change `support@cradlers.com` to your or your organization's actual support or contact email.
-- **Acknowledgments**: Customize this section based on your project contributions and supports.
-
-This `README.md` is designed to be comprehensive and serve both as a guide for new users and a document for developers. It outlines setup instructions, how to contribute, and legal information, making it a robust starting point for your project's documentation.
+ 
