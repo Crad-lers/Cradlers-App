@@ -1,3 +1,5 @@
+import 'package:cradlers2/play_music_screen.dart';
+import 'package:cradlers2/settings_page.dart';
 import 'package:cradlers2/swing_control_screen.dart';
 import 'package:flutter/material.dart';
 
@@ -112,10 +114,16 @@ class DashboardScreen extends StatelessWidget {
                         print("Camera Clicked");
                       }),
                       _buildDashboardButton("Play Music", Icons.music_note, () {
-                        print("Music Clicked");
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => PlayMusicScreen()),
+                        );
                       }),
                       _buildDashboardButton("Settings", Icons.settings, () {
-                        print("Settings Clicked");
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => SettingsPage()),
+                        );
                       }),
                       _buildDashboardButton("Swing", Icons.airline_seat_flat, () {
                         Navigator.push(
