@@ -60,6 +60,5 @@ For support or queries, please email us at [sdgpcs77@gmail.com](mailto:sdgpcs77@
 ## Acknowledgments
 - Thanks to all contributors who have helped shape this project.
 - Special thanks to Flutter community for their continuous support.
-```
 
  
