@@ -4,7 +4,8 @@ import 'splash_screen.dart';
 import 'thank_you_screen.dart';
 import 'login_screen.dart';
 import 'device_list_screen.dart';
-import 'home_screen.dart';  // Make sure to create this file and define HomeScreen
+import 'home_screen.dart';
+import 'add_device_screen.dart';  // Import AddDeviceScreen
 
 void main() {
   runApp(const CradlersApp());
@@ -30,6 +31,7 @@ class CradlersApp extends StatelessWidget {
         '/home': (context) => const HomeScreen(),  // Added HomeScreen
         '/thankyou': (context) => const ThankYouScreen(),
         '/devices': (context) => const DeviceListScreen(),
+        '/addDevice': (context) => const AddDeviceScreen(),  // Add route for AddDeviceScreen
       },
       onGenerateRoute: (settings) {
         // Handle undefined routes

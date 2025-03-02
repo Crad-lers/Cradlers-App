@@ -10,9 +10,9 @@ class DeviceListScreen extends StatelessWidget {
         title: const Text('Cradlers'),
         centerTitle: true,
         leading: IconButton(
-          icon: Icon(Icons.home),
+          icon: const Icon(Icons.home),
           onPressed: () {
-            Navigator.of(context).pop();
+            Navigator.of(context).pop(); // This will take the user back to the previous screen
           },
         ),
       ),
@@ -31,7 +31,10 @@ class DeviceListScreen extends StatelessWidget {
             ),
             const SizedBox(height: 50),
             ElevatedButton(
-              onPressed: () {},
+              onPressed: () {
+                // This is where we navigate to the AddDeviceScreen
+                Navigator.pushNamed(context, '/addDevice');
+              },
               child: const Text('+ Add device'),
             ),
           ],

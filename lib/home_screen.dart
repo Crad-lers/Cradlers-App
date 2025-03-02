@@ -6,47 +6,41 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      extendBodyBehindAppBar: true, // Allows body content to extend behind the AppBar
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,  // Makes AppBar background transparent
-        elevation: 0,  // Removes shadow from AppBar
+        backgroundColor: Colors.transparent,
+        elevation: 0,
         centerTitle: true,
       ),
       body: Container(
-        color: Colors.white,  // Ensures the background color is consistent
+        color: Colors.white,
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Image.asset('assets/logo-wo-bg.png', height: 180),  // Displaying the logo in the body
-              SizedBox(height: 40),  // Space between logo and text
+              Image.asset('assets/logo-wo-bg.png', height: 180),
+              SizedBox(height: 40),
               Text(
                 'Welcome to',
                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                textAlign: TextAlign.center,
               ),
               Text(
                 'Cradlers',
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
-                  color: Color(0xFF39CCCC), // Specific teal color for "Cradlers"
+                  color: Color(0xFF39CCCC),
                 ),
-                textAlign: TextAlign.center,
               ),
-              SizedBox(height: 20),  // Space between text and the first button
+              SizedBox(height: 20),
               ElevatedButton(
-                onPressed: () {
-                  Navigator.pushNamed(context, '/devices');
-                },
+                onPressed: () => Navigator.pushNamed(context, '/devices'),
                 child: const Text('View Devices'),
               ),
-              SizedBox(height: 20),  // Space between the first and second button
+              SizedBox(height: 20),
               ElevatedButton(
-                onPressed: () {
-                  Navigator.pushNamed(context, '/#');
-                },
-                child: const Text('Add new device'),
+                onPressed: () => Navigator.pushNamed(context, '/addDevice'),
+                child: const Text('Add New Device'),
               ),
             ],
           ),
