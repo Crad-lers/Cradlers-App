@@ -1,3 +1,4 @@
+import 'package:cradlers2/swing_control_screen.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -117,7 +118,10 @@ class DashboardScreen extends StatelessWidget {
                         print("Settings Clicked");
                       }),
                       _buildDashboardButton("Swing", Icons.airline_seat_flat, () {
-                        print("Swing Clicked");
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => const SwingControlScreen()),
+                        );
                       }),
                     ],
                   ),
