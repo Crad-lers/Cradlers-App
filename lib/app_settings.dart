@@ -1,3 +1,4 @@
+import 'package:cradlers2/profile_screen.dart';
 import 'package:flutter/material.dart';
 
 class AppSettingsScreen extends StatelessWidget {  // Class name fixed
@@ -13,7 +14,7 @@ class AppSettingsScreen extends StatelessWidget {  // Class name fixed
         children: [
           _buildSectionHeader('Account Details'),
           _buildListTile('Profile', Icons.person, () {
-            Navigator.pushNamed(context, '/profile');
+            Navigator.push(context, MaterialPageRoute(builder: (context) => ProfileScreen()));
           }),
           _buildListTile('Email', Icons.email, () {
             Navigator.pushNamed(context, '/email');

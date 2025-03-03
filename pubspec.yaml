@@ -31,6 +31,8 @@ dependencies:
   flutter:
     sdk: flutter
   google_fonts: ^5.0.0
+  flutter_bloc: ^8.1.3
+  shimmer: ^3.0.0
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -64,6 +66,7 @@ flutter:
     - assets/logo.png
     - assets/logo-wo-bg.png
     - assets/cradle.png
+    - assets/user_avatar.jpg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

@@ -31,16 +31,15 @@ class DashboardScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
-        children: [
-          // Background Image - Ensuring It's Visible
-          Positioned.fill(
-            child: Align(
-              alignment: Alignment.center, // Center the image
+      body: SafeArea( // Ensures content is within visible screen area
+        child: Stack(
+          children: [
+            // Background Image with Responsiveness
+            Positioned.fill(
               child: Image.asset(
-                'assets/cradle.png', // Ensure the path is correct
-                fit: BoxFit.cover, // Adjust to fit well
-                opacity: const AlwaysStoppedAnimation(0.2), // Light transparency
+                'assets/cradle.png',
+                fit: BoxFit.cover,
+                opacity: const AlwaysStoppedAnimation(0.2),
                 errorBuilder: (context, error, stackTrace) {
                   return const Center(
                     child: Text("Image not found", style: TextStyle(color: Colors.red)),
@@ -48,100 +47,86 @@ class DashboardScreen extends StatelessWidget {
                 },
               ),
             ),
-          ),
 
-          // Content
-          Column(
-            children: [
-              // Header with Logo and Home Icon
-              Container(
-                padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 15),
-                color: Colors.white.withOpacity(0.9),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    IconButton(
-                      icon: const Icon(Icons.home, size: 28),
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                    ),
-                    Column(
-                      children: [
-                        Image.asset(
-                          'assets/logo.png',
-                          height: 50,
-                        ),
-                        const Text(
-                          "Cradlers",
-                          style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(width: 40),
-                  ],
-                ),
-              ),
-
-              // Dashboard Header
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(12),
-                color: const Color(0xFF3CCBCC),
-                child: const Center(
-                  child: Text(
-                    "Dashboard",
-                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white),
-                  ),
-                ),
-              ),
-
-              const SizedBox(height: 20),
-
-              // Grid of Buttons
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: GridView.count(
-                    crossAxisCount: 2,
-                    mainAxisSpacing: 20,
-                    crossAxisSpacing: 20,
-                    childAspectRatio: 1,
+            // Content
+            Column(
+              children: [
+                // Header with Logo and Home Icon
+                Container(
+                  padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 15),
+                  color: Colors.white.withOpacity(0.9),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      _buildDashboardButton("Health", Icons.favorite, () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => HealthScreen()),
-                        );
-                      }),
-                      _buildDashboardButton("Camera", Icons.videocam, () {
-                        print("Camera Clicked");
-                      }),
-                      _buildDashboardButton("Play Music", Icons.music_note, () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => PlayMusicScreen()),
-                        );
-                      }),
-                      _buildDashboardButton("Settings", Icons.settings, () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => SettingsPage()),
-                        );
-                      }),
-                      _buildDashboardButton("Swing", Icons.airline_seat_flat, () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => const SwingControlScreen()),
-                        );
-                      }),
+                      IconButton(
+                        icon: const Icon(Icons.home, size: 28),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                      Column(
+                        children: [
+                          Image.asset(
+                            'assets/logo.png',
+                            height: 50,
+                          ),
+                          const Text(
+                            "Cradlers",
+                            style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(width: 40), // Placeholder for alignment
                     ],
                   ),
                 ),
-              ),
-            ],
-          ),
-        ],
+
+                // Dashboard Header
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(12),
+                  color: const Color(0xFF3CCBCC),
+                  child: const Center(
+                    child: Text(
+                      "Dashboard",
+                      style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white),
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: 20),
+
+                // Responsive Grid of Buttons
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: LayoutBuilder(
+                      builder: (context, constraints) {
+                        int crossAxisCount = constraints.maxWidth > 600 ? 3 : 2;
+                        return GridView.builder(
+                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: crossAxisCount,
+                            mainAxisSpacing: 20,
+                            crossAxisSpacing: 20,
+                            childAspectRatio: 1,
+                          ),
+                          itemCount: 5,
+                          itemBuilder: (context, index) {
+                            return _buildDashboardButton(
+                              _buttonData[index]['label']!,
+                              _buttonData[index]['icon']!,
+                              _buttonData[index]['onTap']!(context),
+                            );
+                          },
+                        );
+                      },
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -179,4 +164,43 @@ class DashboardScreen extends StatelessWidget {
       ),
     );
   }
+
+  // Button Data
+  static final List<Map<String, dynamic>> _buttonData = [
+    {
+      'label': "Health",
+      'icon': Icons.favorite,
+      'onTap': (BuildContext context) => () {
+        Navigator.push(context, MaterialPageRoute(builder: (context) => HealthScreen()));
+      },
+    },
+    {
+      'label': "Camera",
+      'icon': Icons.videocam,
+      'onTap': (BuildContext context) => () {
+        print("Camera Clicked");
+      },
+    },
+    {
+      'label': "Play Music",
+      'icon': Icons.music_note,
+      'onTap': (BuildContext context) => () {
+        Navigator.push(context, MaterialPageRoute(builder: (context) => PlayMusicScreen()));
+      },
+    },
+    {
+      'label': "Settings",
+      'icon': Icons.settings,
+      'onTap': (BuildContext context) => () {
+        Navigator.push(context, MaterialPageRoute(builder: (context) => SettingsPage()));
+      },
+    },
+    {
+      'label': "Swing",
+      'icon': Icons.airline_seat_flat,
+      'onTap': (BuildContext context) => () {
+        Navigator.push(context, MaterialPageRoute(builder: (context) => const SwingControlScreen()));
+      },
+    },
+  ];
 }
