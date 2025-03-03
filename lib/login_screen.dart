@@ -13,9 +13,8 @@ class _SignInScreenState extends State<SignInScreen> {
   final TextEditingController passwordController = TextEditingController();
   bool obscurePassword = true;
 
-  // Extracted brand color from the logo
-  final Color primaryColor = Color(0xFF22C3C8); // Teal from the logo
-  final Color textColor = Colors.black87; // Adjust text contrast if needed
+  final Color primaryColor = const Color(0xFF22C3C8); // Teal from logo
+  final Color textColor = Colors.black87;
 
   @override
   Widget build(BuildContext context) {
@@ -93,18 +92,8 @@ class _SignInScreenState extends State<SignInScreen> {
               const SizedBox(height: 10),
               TextButton(
                 onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const ForgotPasswordScreen()),
-                  );
+                  Navigator.pushNamed(context, '/signup'); // Navigate to SignUp
                 },
-                style: TextButton.styleFrom(
-                  foregroundColor: primaryColor, // Matching branding color
-                ),
-                child: const Text('Forgot Password?'),
-              ),
-              TextButton(
-                onPressed: () {},
                 child: Text.rich(
                   TextSpan(
                     text: "Don’t have an account? ",
