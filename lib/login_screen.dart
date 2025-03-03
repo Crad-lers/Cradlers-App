@@ -1,18 +1,21 @@
 import 'package:flutter/material.dart';
-
 import 'forgot_password_screen.dart';
 
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+class SignInScreen extends StatefulWidget {
+  const SignInScreen({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  State<SignInScreen> createState() => _SignInScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
-  final TextEditingController emailController = TextEditingController();
+class _SignInScreenState extends State<SignInScreen> {
+  final TextEditingController phoneController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   bool obscurePassword = true;
+
+  // Extracted brand color from the logo
+  final Color primaryColor = Color(0xFF22C3C8); // Teal from the logo
+  final Color textColor = Colors.black87; // Adjust text contrast if needed
 
   @override
   Widget build(BuildContext context) {
@@ -23,17 +26,30 @@ class _LoginScreenState extends State<LoginScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Image.asset('assets/logo-wo-bg.png', height: 100),
+              Image.asset(
+                "assets/logo-wo-bg.png",
+                height: 100,
+              ),
               const SizedBox(height: 20),
-              const Text(
-                'Welcome!\nto CRADLers',
+              Text(
+                'Sign In',
                 textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: textColor),
               ),
               const SizedBox(height: 20),
               TextField(
-                controller: emailController,
-                decoration: InputDecoration(labelText: 'Email'),
+                controller: phoneController,
+                keyboardType: TextInputType.phone,
+                decoration: InputDecoration(
+                  labelText: 'Email',
+                  filled: true,
+                  fillColor: primaryColor.withOpacity(0.1),
+                  border: const OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(50)),
+                    borderSide: BorderSide.none,
+                  ),
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                ),
               ),
               const SizedBox(height: 10),
               TextField(
@@ -41,8 +57,18 @@ class _LoginScreenState extends State<LoginScreen> {
                 obscureText: obscurePassword,
                 decoration: InputDecoration(
                   labelText: 'Password',
+                  filled: true,
+                  fillColor: primaryColor.withOpacity(0.1),
+                  border: const OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(50)),
+                    borderSide: BorderSide.none,
+                  ),
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
                   suffixIcon: IconButton(
-                    icon: Icon(obscurePassword ? Icons.visibility_off : Icons.visibility),
+                    icon: Icon(
+                      obscurePassword ? Icons.visibility_off : Icons.visibility,
+                      color: primaryColor,
+                    ),
                     onPressed: () {
                       setState(() {
                         obscurePassword = !obscurePassword;
@@ -56,7 +82,13 @@ class _LoginScreenState extends State<LoginScreen> {
                 onPressed: () {
                   Navigator.pushReplacementNamed(context, '/home');
                 },
-                child: const Text('Log In'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: primaryColor,
+                  foregroundColor: Colors.white,
+                  minimumSize: const Size(double.infinity, 48),
+                  shape: const StadiumBorder(),
+                ),
+                child: const Text('Sign In'),
               ),
               const SizedBox(height: 10),
               TextButton(
@@ -66,7 +98,25 @@ class _LoginScreenState extends State<LoginScreen> {
                     MaterialPageRoute(builder: (context) => const ForgotPasswordScreen()),
                   );
                 },
-                child: const Text('I forgot my password'),
+                style: TextButton.styleFrom(
+                  foregroundColor: primaryColor, // Matching branding color
+                ),
+                child: const Text('Forgot Password?'),
+              ),
+              TextButton(
+                onPressed: () {},
+                child: Text.rich(
+                  TextSpan(
+                    text: "Don’t have an account? ",
+                    children: [
+                      TextSpan(
+                        text: "Sign Up",
+                        style: TextStyle(color: primaryColor, fontWeight: FontWeight.bold),
+                      ),
+                    ],
+                  ),
+                  style: TextStyle(color: textColor),
+                ),
               ),
             ],
           ),

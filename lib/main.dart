@@ -27,7 +27,7 @@ class CradlersApp extends StatelessWidget {
       initialRoute: '/',
       routes: {
         '/': (context) => const SplashScreen(),
-        '/login': (context) => const LoginScreen(),
+        '/login': (context) => const SignInScreen(),
         '/home': (context) => const HomeScreen(),  // Added HomeScreen
         '/thankyou': (context) => const ThankYouScreen(),
         '/devices': (context) => const DeviceListScreen(),
