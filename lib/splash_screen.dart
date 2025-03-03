@@ -25,14 +25,23 @@ class _SplashScreenState extends State<SplashScreen> {
           children: [
             Image.asset('assets/logo-wo-bg.png', height: 100),
             const SizedBox(height: 20),
-            Text(
+            const Text(
               'Cradlers',
-              style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                fontSize: 32,
+                fontWeight: FontWeight.bold,
+                color: Color(0xFF22C3C8), // Teal color from logo
+              ),
             ),
             const SizedBox(height: 10),
-            const Text('Embrace Comfort, Elevate Style'),
+            const Text(
+              'Embrace Comfort, Elevate Style',
+              style: TextStyle(fontSize: 16, color: Colors.grey),
+            ),
             const SizedBox(height: 30),
-            const CircularProgressIndicator(),
+            const CircularProgressIndicator(
+              color: Color(0xFF22C3C8), // Match branding color
+            ),
           ],
         ),
       ),
