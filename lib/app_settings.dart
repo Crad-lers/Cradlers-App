@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 
-class AppSettings extends StatelessWidget {
+class AppSettingsScreen extends StatelessWidget {  // Class name fixed
+  const AppSettingsScreen({super.key});  // Added super.key for best practice
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Settings'),
+        title: const Text('Settings'),
       ),
       body: ListView(
         children: [
@@ -30,7 +32,7 @@ class AppSettings extends StatelessWidget {
 
           _buildSectionHeader('Notifications'),
           SwitchListTile(
-            title: Text('Push Notifications'),
+            title: const Text('Push Notifications'),
             value: true,
             onChanged: (bool value) {},
           ),
@@ -52,7 +54,7 @@ class AppSettings extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
       child: Text(
         title,
-        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
       ),
     );
   }
@@ -61,7 +63,7 @@ class AppSettings extends StatelessWidget {
     return ListTile(
       leading: Icon(icon),
       title: Text(title),
-      trailing: Icon(Icons.arrow_forward_ios),
+      trailing: const Icon(Icons.arrow_forward_ios),
       onTap: onTap,
     );
   }
