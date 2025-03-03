@@ -12,68 +12,112 @@ class _PlayMusicScreenState extends State<PlayMusicScreen> {
   String activeTrack = "Track 1"; // Default active track
   int maxTracks = 6; // Maximum number of tracks
 
+  // Extracted brand color from the logo
+  final Color primaryColor = const Color(0xFF22C3C8); // Teal from your logo
+  final Color secondaryColor = const Color(0xFF198F94); // Darker teal for contrast
+
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.black),
+          icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => Navigator.pop(context),
         ),
       ),
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
+        padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.07), // Responsive padding
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             // Logo and Title
             Row(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Image.asset('assets/logo-wo-bg.png', height: 40), // Logo
-                SizedBox(width: 10),
+                Image.asset('assets/logo.png', height: 50), // Logo
               ],
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 20),
 
             // Page Title
-            Text(
+            const Text(
               "Play Music",
-              style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                fontSize: 30,
+                fontWeight: FontWeight.bold,
+                letterSpacing: 1.2,
+              ),
             ),
-            SizedBox(height: 15),
+            const SizedBox(height: 25),
 
-            // Active Track Centered
+            // Active Track Indicator
             Container(
-              padding: EdgeInsets.symmetric(vertical: 12, horizontal: 20),
+              padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 20),
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(20),
+                borderRadius: BorderRadius.circular(25),
+                gradient: LinearGradient(
+                  colors: [primaryColor, secondaryColor],
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: primaryColor.withOpacity(0.3),
+                    blurRadius: 8,
+                    spreadRadius: 2,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.music_note, color: Colors.black54, size: 22),
-                  SizedBox(width: 8),
+                  const Icon(Icons.music_note, color: Colors.white, size: 24),
+                  const SizedBox(width: 8),
                   Text(
-                    "Active - $activeTrack",
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    "Now Playing - $activeTrack",
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
                   ),
                 ],
               ),
             ),
-            SizedBox(height: 10), // Reduced gap for better spacing
+            const SizedBox(height: 40),
 
-            // Track Buttons - Centered
+            // Track Buttons
             Expanded(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+              child: ListView(
+                shrinkWrap: true,
                 children: [
                   ...tracks.map((track) {
+                    bool isActive = track == activeTrack;
+
                     return Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 5),
-                      child: SizedBox(
+                      padding: const EdgeInsets.symmetric(vertical: 10), // Increased spacing
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 300),
                         width: double.infinity,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(30),
+                          gradient: isActive
+                              ? LinearGradient(colors: [primaryColor, secondaryColor])
+                              : null,
+                          boxShadow: isActive
+                              ? [
+                            BoxShadow(
+                              color: primaryColor.withOpacity(0.3),
+                              blurRadius: 6,
+                              offset: const Offset(0, 3),
+                            )
+                          ]
+                              : [],
+                        ),
                         child: ElevatedButton(
                           onPressed: () {
                             setState(() {
@@ -81,25 +125,30 @@ class _PlayMusicScreenState extends State<PlayMusicScreen> {
                             });
                           },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.grey[300],
+                            backgroundColor: isActive ? Colors.transparent : Colors.grey[300],
+                            shadowColor: Colors.transparent,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(30),
                             ),
-                            padding: EdgeInsets.symmetric(vertical: 16),
+                            padding: const EdgeInsets.symmetric(vertical: 18),
                           ),
                           child: Text(
                             track,
-                            style: TextStyle(fontSize: 18, color: Colors.black),
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: isActive ? Colors.white : Colors.black,
+                            ),
                           ),
                         ),
                       ),
                     );
                   }).toList(),
 
-                  // Add Track Button (Consistent Size)
+                  // Add Track Button
                   if (tracks.length < maxTracks)
                     Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 5),
+                      padding: const EdgeInsets.symmetric(vertical: 10), // Increased spacing
                       child: SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(
@@ -111,15 +160,15 @@ class _PlayMusicScreenState extends State<PlayMusicScreen> {
                             });
                           },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.grey[300],
+                            backgroundColor: primaryColor.withOpacity(0.9),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(30),
                             ),
-                            padding: EdgeInsets.symmetric(vertical: 16),
+                            padding: const EdgeInsets.symmetric(vertical: 18),
                           ),
-                          child: Text(
-                            "+Add Track",
-                            style: TextStyle(fontSize: 18, color: Colors.black),
+                          child: const Text(
+                            "+ Add Track",
+                            style: TextStyle(fontSize: 18, color: Colors.white, fontWeight: FontWeight.bold),
                           ),
                         ),
                       ),
