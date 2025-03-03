@@ -3,10 +3,11 @@ import 'package:google_fonts/google_fonts.dart';
 import 'splash_screen.dart';
 import 'thank_you_screen.dart';
 import 'login_screen.dart';
-import 'signup_screen.dart';  // Import SignUpScreen
+import 'signup_screen.dart';
 import 'device_list_screen.dart';
 import 'home_screen.dart';
-import 'add_device_screen.dart';  // Import AddDeviceScreen
+import 'add_device_screen.dart';
+import 'app_settings.dart';  // Import AppSettingsScreen
 
 void main() {
   runApp(const CradlersApp());
@@ -29,11 +30,12 @@ class CradlersApp extends StatelessWidget {
       routes: {
         '/': (context) => const SplashScreen(),
         '/login': (context) => const SignInScreen(),
-        '/signup': (context) => const SignUpScreen(), // Added SignUpScreen route
+        '/signup': (context) => const SignUpScreen(),
         '/home': (context) => const HomeScreen(),
         '/thankyou': (context) => const ThankYouScreen(),
         '/devices': (context) => const DeviceListScreen(),
         '/addDevice': (context) => const AddDeviceScreen(),
+        '/settings': (context) => const AppSettingsScreen(), // Added App Settings Route
       },
       onGenerateRoute: (settings) {
         return MaterialPageRoute(builder: (context) {
