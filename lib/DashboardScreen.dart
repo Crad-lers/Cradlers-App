@@ -1,3 +1,4 @@
+import 'package:cradlers2/camera_view.dart';
 import 'package:cradlers2/health_screen.dart';
 import 'package:cradlers2/play_music_screen.dart';
 import 'package:cradlers2/settings_page.dart';
@@ -178,7 +179,7 @@ class DashboardScreen extends StatelessWidget {
       'label': "Camera",
       'icon': Icons.videocam,
       'onTap': (BuildContext context) => () {
-        print("Camera Clicked");
+        Navigator.push(context, MaterialPageRoute(builder: (context) => CameraViewPage()));
       },
     },
     {
