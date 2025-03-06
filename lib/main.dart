@@ -7,7 +7,9 @@ import 'signup_screen.dart';
 import 'device_list_screen.dart';
 import 'home_screen.dart';
 import 'add_device_screen.dart';
-import 'app_settings.dart';  // Import AppSettingsScreen
+import 'app_settings.dart'; // Import AppSettingsScreen
+import 'changepasswordscreen.dart'; // Make sure to create this
+import 'profile_screen.dart'; // Make sure to create this
 
 void main() {
   runApp(const CradlersApp());
@@ -36,6 +38,7 @@ class CradlersApp extends StatelessWidget {
         '/devices': (context) => const DeviceListScreen(),
         '/addDevice': (context) => const AddDeviceScreen(),
         '/settings': (context) => const AppSettingsScreen(), // Added App Settings Route
+        '/changePassword': (context) => ChangePasswordScreen(), // Added Change Password Route
       },
       onGenerateRoute: (settings) {
         return MaterialPageRoute(builder: (context) {

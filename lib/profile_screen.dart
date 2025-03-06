@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shimmer/shimmer.dart';
+import 'changepasswordscreen.dart'; // Ensure this import is correct
 
 class ProfileScreen extends StatefulWidget {
   @override
@@ -37,7 +38,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             const SizedBox(height: 15),
             _buildProfileInfoCard(),
             const SizedBox(height: 15),
-            _buildSettingsOptions(),
+            _buildSettingsOptions(context), // Pass context to use for navigation
           ],
         ),
       ),
@@ -87,13 +88,51 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
+  Widget _buildSettingsOptions(BuildContext context) {
+    return Card(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+      elevation: 4,
+      shadowColor: Colors.black54,
+      child: Column(
+        children: [
+          _buildSettingsTile(context, Icons.lock, "Change Password", () {
+            Navigator.push(context, MaterialPageRoute(builder: (context) => ChangePasswordScreen()));
+          }),
+          _buildDivider(),
+          _buildSettingsTile(context, Icons.notifications, "Notifications", () {
+            print("Notifications Clicked");
+          }),
+          _buildDivider(),
+          _buildSettingsTile(context, Icons.exit_to_app, "Logout", () {
+            print("Logout Clicked");
+          }, isLogout: true),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSettingsTile(BuildContext context, IconData icon, String title, VoidCallback onTap, {bool isLogout = false}) {
+    return ListTile(
+      dense: true,
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      leading: Icon(icon, color: isLogout ? Colors.red : Colors.black87, size: 24),
+      title: Text(title, style: TextStyle(fontSize: 16, color: isLogout ? Colors.red : Colors.black87)),
+      onTap: onTap,
+      trailing: const Icon(Icons.arrow_forward_ios, size: 18, color: Colors.black38),
+    );
+  }
+
+  Widget _buildDivider() {
+    return const Divider(color: Colors.black12, height: 12);
+  }
+
   Widget _buildProfileInfoCard() {
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
       elevation: 4,
       shadowColor: Colors.black54,
       child: Padding(
-        padding: const EdgeInsets.all(14),
+        padding: const EdgeInsets.all(16),
         child: Column(
           children: [
             _buildInfoRow("Phone", "+123 456 7890"),
@@ -101,8 +140,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
             _buildInfoRow("Location", "New York, USA"),
             _buildDivider(),
             _buildInfoRow("Bio", "Flutter Developer | Tech Enthusiast"),
-            const SizedBox(height: 10),
-            _buildEditProfileButton(),
           ],
         ),
       ),
@@ -116,55 +153,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
         Text(title, style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
         Text(value, style: TextStyle(fontSize: 15, color: Colors.black54)),
       ],
-    );
-  }
-
-  Widget _buildDivider() {
-    return const Divider(color: Colors.black12, height: 12);
-  }
-
-  Widget _buildEditProfileButton() {
-    return ElevatedButton.icon(
-      style: ElevatedButton.styleFrom(
-        foregroundColor: Colors.white,
-        backgroundColor: Color(0xFF3CCBCC),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      ),
-      onPressed: () => print("Edit Profile Clicked"),
-      icon: const Icon(Icons.edit, size: 18),
-      label: const Text("Edit Profile", style: TextStyle(fontSize: 14)),
-    );
-  }
-
-  Widget _buildSettingsOptions() {
-    return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-      elevation: 4,
-      shadowColor: Colors.black54,
-      child: Column(
-        children: [
-          _buildSettingsTile(Icons.lock, "Change Password", () => print("Change Password Clicked")),
-          _buildDivider(),
-          _buildSettingsTile(Icons.notifications, "Notifications", () => print("Notifications Clicked")),
-          _buildDivider(),
-          _buildSettingsTile(Icons.dark_mode, "Dark Mode", () {
-            setState(() => isDarkMode = !isDarkMode);
-          }, trailing: Switch(value: isDarkMode, onChanged: (val) => setState(() => isDarkMode = val))),
-          _buildDivider(),
-          _buildSettingsTile(Icons.exit_to_app, "Logout", () => print("Logout Clicked"), isLogout: true),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSettingsTile(IconData icon, String title, VoidCallback onTap, {Widget? trailing, bool isLogout = false}) {
-    return ListTile(
-      dense: true,
-      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      leading: Icon(icon, color: isLogout ? Colors.red : Colors.black87, size: 24),
-      title: Text(title, style: TextStyle(fontSize: 16, color: isLogout ? Colors.red : Colors.black87)),
-      trailing: trailing ?? const Icon(Icons.arrow_forward_ios, size: 18, color: Colors.black38),
-      onTap: onTap,
     );
   }
 }

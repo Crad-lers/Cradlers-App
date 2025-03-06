@@ -1,8 +1,8 @@
-import 'package:cradlers2/profile_screen.dart';
 import 'package:flutter/material.dart';
+import 'profile_screen.dart'; // Make sure this is created and correctly located
 
-class AppSettingsScreen extends StatelessWidget {  // Class name fixed
-  const AppSettingsScreen({super.key});  // Added super.key for best practice
+class AppSettingsScreen extends StatelessWidget {
+  const AppSettingsScreen({super.key}); // Added super.key for best practice
 
   @override
   Widget build(BuildContext context) {
@@ -16,13 +16,9 @@ class AppSettingsScreen extends StatelessWidget {  // Class name fixed
           _buildListTile('Profile', Icons.person, () {
             Navigator.push(context, MaterialPageRoute(builder: (context) => ProfileScreen()));
           }),
-          _buildListTile('Email', Icons.email, () {
-            Navigator.pushNamed(context, '/email');
+          _buildListTile('Change Password', Icons.lock, () {
+            Navigator.pushNamed(context, '/changePassword');
           }),
-          _buildListTile('Password', Icons.lock, () {
-            Navigator.pushNamed(context, '/password');
-          }),
-
           _buildSectionHeader('Preferences'),
           _buildListTile('Languages', Icons.language, () {
             Navigator.pushNamed(context, '/language');
@@ -30,14 +26,12 @@ class AppSettingsScreen extends StatelessWidget {  // Class name fixed
           _buildListTile('Appearance', Icons.palette, () {
             Navigator.pushNamed(context, '/appearance');
           }),
-
           _buildSectionHeader('Notifications'),
           SwitchListTile(
             title: const Text('Push Notifications'),
             value: true,
             onChanged: (bool value) {},
           ),
-
           _buildSectionHeader('About'),
           _buildListTile('Device Info', Icons.info, () {
             Navigator.pushNamed(context, '/deviceinfo');
