@@ -7,10 +7,10 @@ import 'signup_screen.dart';
 import 'device_list_screen.dart';
 import 'home_screen.dart';
 import 'add_device_screen.dart';
-import 'app_settings.dart'; // Import AppSettingsScreen
-import 'changepasswordscreen.dart'; // Make sure to create this
-import 'profile_screen.dart'; // Make sure to create this
-import 'languages_screen.dart'; // Import LanguagesScreen
+import 'app_settings.dart';
+import 'changepasswordscreen.dart';
+import 'profile_screen.dart';
+import 'language_screen.dart'; // Import LanguagesScreen
 
 void main() {
   runApp(const CradlersApp());
@@ -40,7 +40,7 @@ class CradlersApp extends StatelessWidget {
         '/addDevice': (context) => const AddDeviceScreen(),
         '/settings': (context) => const AppSettingsScreen(),
         '/changePassword': (context) => ChangePasswordScreen(),
-        '/languages': (context) => languagescreen(), // Route for LanguagesScreen
+        '/language': (context) => LanguagesScreen(),
       },
       onGenerateRoute: (settings) {
         // Handling undefined routes:

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'profile_screen.dart'; // Make sure this is created and correctly located
 
 class AppSettingsScreen extends StatelessWidget {
-  const AppSettingsScreen({super.key}); // Added super.key for best practice
+  const AppSettingsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -14,7 +14,7 @@ class AppSettingsScreen extends StatelessWidget {
         children: [
           _buildSectionHeader('Account Details'),
           _buildListTile('Profile', Icons.person, () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => ProfileScreen()));
+            Navigator.pushNamed(context, '/profile');
           }),
           _buildListTile('Change Password', Icons.lock, () {
             Navigator.pushNamed(context, '/changePassword');
