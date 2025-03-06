@@ -1,8 +1,15 @@
 import 'package:flutter/material.dart';
 import 'profile_screen.dart'; // Make sure this is created and correctly located
 
-class AppSettingsScreen extends StatelessWidget {
-  const AppSettingsScreen({super.key});
+class AppSettingsScreen extends StatefulWidget {
+  const AppSettingsScreen({Key? key}) : super(key: key);
+
+  @override
+  _AppSettingsScreenState createState() => _AppSettingsScreenState();
+}
+
+class _AppSettingsScreenState extends State<AppSettingsScreen> {
+  bool isNotificationsEnabled = true; // Default value for notifications
 
   @override
   Widget build(BuildContext context) {
@@ -29,8 +36,12 @@ class AppSettingsScreen extends StatelessWidget {
           _buildSectionHeader('Notifications'),
           SwitchListTile(
             title: const Text('Push Notifications'),
-            value: true,
-            onChanged: (bool value) {},
+            value: isNotificationsEnabled,
+            onChanged: (bool value) {
+              setState(() {
+                isNotificationsEnabled = value;
+              });
+            },
           ),
           _buildSectionHeader('About'),
           _buildListTile('Device Info', Icons.info, () {
@@ -42,7 +53,6 @@ class AppSettingsScreen extends StatelessWidget {
           _buildListTile('Appearance', Icons.palette, () {
             Navigator.pushNamed(context, '/appearance');
           }),
-
         ],
       ),
     );
