@@ -39,6 +39,10 @@ class AppSettingsScreen extends StatelessWidget {
           _buildListTile('App Version', Icons.system_update, () {
             Navigator.pushNamed(context, '/appversion');
           }),
+          _buildListTile('Appearance', Icons.palette, () {
+            Navigator.pushNamed(context, '/appearance');
+          }),
+
         ],
       ),
     );

@@ -1,60 +1,58 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'theme_provider.dart';
+import 'screens/home_screen.dart';
+import 'screens/splash_screen.dart';
+import 'screens/login_screen.dart';
+import 'screens/signup_screen.dart';
+import 'screens/thank_you_screen.dart';
+import 'screens/device_list_screen.dart';
+import 'screens/add_device_screen.dart';
+import 'screens/app_settings.dart';
+import 'screens/changepasswordscreen.dart';
+import 'screens/profile_screen.dart';
+import 'screens/language_screen.dart';
+import 'screens/appearance_screen.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'splash_screen.dart';
-import 'thank_you_screen.dart';
-import 'login_screen.dart';
-import 'signup_screen.dart';
-import 'device_list_screen.dart';
-import 'home_screen.dart';
-import 'add_device_screen.dart';
-import 'app_settings.dart';
-import 'changepasswordscreen.dart';
-import 'profile_screen.dart';
-import 'language_screen.dart'; // Import LanguagesScreen
 
-void main() {
-  runApp(const CradlersApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  ThemeProvider themeProvider = ThemeProvider(ThemeData.light());
+  await themeProvider.loadThemeFromPrefs();
+  runApp(MyApp(themeProvider: themeProvider));
 }
 
-class CradlersApp extends StatelessWidget {
-  const CradlersApp({super.key});
+class MyApp extends StatelessWidget {
+  final ThemeProvider themeProvider;
+
+  const MyApp({Key? key, required this.themeProvider}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Cradlers',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-        textTheme: GoogleFonts.poppinsTextTheme(
-          Theme.of(context).textTheme,
-        ),
-      ),
-      initialRoute: '/',
-      routes: {
-        '/': (context) => const SplashScreen(),
-        '/login': (context) => const SignInScreen(),
-        '/signup': (context) => const SignUpScreen(),
-        '/home': (context) => const HomeScreen(),
-        '/thankyou': (context) => const ThankYouScreen(),
-        '/devices': (context) => const DeviceListScreen(),
-        '/addDevice': (context) => const AddDeviceScreen(),
-        '/settings': (context) => const AppSettingsScreen(),
-        '/changePassword': (context) => ChangePasswordScreen(),
-        '/language': (context) => LanguagesScreen(),
-      },
-      onGenerateRoute: (settings) {
-        // Handling undefined routes:
-        return MaterialPageRoute(builder: (context) {
-          return Scaffold(
-            appBar: AppBar(
-              title: Text('Page Not Found'),
-            ),
-            body: Center(
-              child: Text('No route defined for ${settings.name}'),
-            ),
+    return ChangeNotifierProvider<ThemeProvider>(
+      create: (_) => themeProvider,
+      child: Consumer<ThemeProvider>(
+        builder: (context, theme, _) {
+          return MaterialApp(
+            title: 'Cradlers',
+            theme: theme.themeData,
+            initialRoute: '/',
+            routes: {
+              '/': (context) => SplashScreen(),
+              '/login': (context) => SignInScreen(),
+              '/signup': (context) => SignUpScreen(),
+              '/home': (context) => HomeScreen(),
+              '/thankyou': (context) => ThankYouScreen(),
+              '/devices': (context) => DeviceListScreen(),
+              '/addDevice': (context) => AddDeviceScreen(),
+              '/settings': (context) => AppSettingsScreen(),
+              '/changePassword': (context) => ChangePasswordScreen(),
+              '/language': (context) => LanguagesScreen(),
+              '/appearance': (context) => AppearanceScreen(),
+            },
           );
-        });
-      },
+        },
+      ),
     );
   }
 }
