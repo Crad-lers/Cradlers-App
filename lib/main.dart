@@ -49,6 +49,7 @@ class MyApp extends StatelessWidget {
               '/changePassword': (context) => ChangePasswordScreen(),
               '/language': (context) => LanguagesScreen(),
               '/appearance': (context) => AppearanceScreen(),
+              '/profile': (context) => ProfileScreen(),
             },
           );
         },
