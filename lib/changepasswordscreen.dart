@@ -12,10 +12,13 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Convert hex color to Flutter color
+    final Color customTeal = Color(0xFF3BBEBB);
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Change Password'),
-        backgroundColor: Colors.teal,
+        backgroundColor: customTeal, // Use the custom teal color
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
@@ -30,7 +33,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
             ElevatedButton(
               onPressed: _changePassword,
               child: Text('Update Password'),
-              style: ElevatedButton.styleFrom(backgroundColor: Colors.teal),
+              style: ElevatedButton.styleFrom(backgroundColor: customTeal), // Use the custom teal color
             ),
           ],
         ),
