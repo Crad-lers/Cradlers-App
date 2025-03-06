@@ -10,6 +10,7 @@ import 'add_device_screen.dart';
 import 'app_settings.dart'; // Import AppSettingsScreen
 import 'changepasswordscreen.dart'; // Make sure to create this
 import 'profile_screen.dart'; // Make sure to create this
+import 'languages_screen.dart'; // Import LanguagesScreen
 
 void main() {
   runApp(const CradlersApp());
@@ -37,14 +38,16 @@ class CradlersApp extends StatelessWidget {
         '/thankyou': (context) => const ThankYouScreen(),
         '/devices': (context) => const DeviceListScreen(),
         '/addDevice': (context) => const AddDeviceScreen(),
-        '/settings': (context) => const AppSettingsScreen(), // Added App Settings Route
-        '/changePassword': (context) => ChangePasswordScreen(), // Added Change Password Route
+        '/settings': (context) => const AppSettingsScreen(),
+        '/changePassword': (context) => ChangePasswordScreen(),
+        '/languages': (context) => languagescreen(), // Route for LanguagesScreen
       },
       onGenerateRoute: (settings) {
+        // Handling undefined routes:
         return MaterialPageRoute(builder: (context) {
           return Scaffold(
             appBar: AppBar(
-              title: const Text('Page Not Found'),
+              title: Text('Page Not Found'),
             ),
             body: Center(
               child: Text('No route defined for ${settings.name}'),
