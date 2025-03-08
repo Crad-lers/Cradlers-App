@@ -25,8 +25,8 @@ class _SignInScreenState extends State<SignInScreen> {
     if (_formKey.currentState!.validate()) {
       // Prepare the data to send
       final Map<String, dynamic> signInData = {
-        "email": emailController.text,
-        "password": passwordController.text,
+        "email": emailController.text.trim(),
+        "password": passwordController.text.trim(),
       };
 
       try {
@@ -53,7 +53,7 @@ class _SignInScreenState extends State<SignInScreen> {
           // Handle errors
           final responseData = jsonDecode(response.body);
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(responseData['message'])),
+            SnackBar(content: Text(responseData['message'] ?? 'Login failed')),
           );
         }
       } catch (error) {
