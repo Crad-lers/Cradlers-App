@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert'; // For encoding/decoding JSON
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key});
@@ -17,6 +19,51 @@ class _SignInScreenState extends State<SignInScreen> {
 
   // Form key for validation
   final _formKey = GlobalKey<FormState>();
+
+  // Function to handle sign-in
+  Future<void> _signIn() async {
+    if (_formKey.currentState!.validate()) {
+      // Prepare the data to send
+      final Map<String, dynamic> signInData = {
+        "email": emailController.text,
+        "password": passwordController.text,
+      };
+
+      try {
+        // Send POST request to the backend
+        final response = await http.post(
+          Uri.parse('http://localhost:5000/api/auth/signin'), // Backend URL
+          headers: <String, String>{
+            'Content-Type': 'application/json; charset=UTF-8',
+          },
+          body: jsonEncode(signInData),
+        );
+
+        // Check the response status
+        if (response.statusCode == 200) {
+          // Success: Parse the response
+          final responseData = jsonDecode(response.body);
+          final String token = responseData['token'];
+          final Map<String, dynamic> user = responseData['user'];
+
+          // Save the token (e.g., using SharedPreferences)
+          // Navigate to the home screen
+          Navigator.pushReplacementNamed(context, '/home');
+        } else {
+          // Handle errors
+          final responseData = jsonDecode(response.body);
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(responseData['message'])),
+          );
+        }
+      } catch (error) {
+        // Handle network errors
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Network error: $error')),
+        );
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -103,13 +150,7 @@ class _SignInScreenState extends State<SignInScreen> {
                 const SizedBox(height: 20),
                 // Sign In Button
                 ElevatedButton(
-                  onPressed: () {
-                    // Validate the form
-                    if (_formKey.currentState!.validate()) {
-                      // If the form is valid, proceed to the next screen
-                      Navigator.pushReplacementNamed(context, '/home');
-                    }
-                  },
+                  onPressed: _signIn, // Call the sign-in function
                   style: ElevatedButton.styleFrom(
                     backgroundColor: primaryColor,
                     foregroundColor: Colors.white,
