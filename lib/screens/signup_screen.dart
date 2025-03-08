@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert'; // For encoding/decoding JSON
-import '../forgot_password_screen.dart';
+import '../forgot_password_screen.dart'; 
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
