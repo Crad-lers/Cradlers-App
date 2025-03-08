@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'profile_screen.dart'; // Make sure this is created and correctly located
+import 'profile_screen.dart'; // Ensure this is correctly located and implemented
 
 class AppSettingsScreen extends StatefulWidget {
   const AppSettingsScreen({Key? key}) : super(key: key);
@@ -9,7 +9,7 @@ class AppSettingsScreen extends StatefulWidget {
 }
 
 class _AppSettingsScreenState extends State<AppSettingsScreen> {
-  bool isNotificationsEnabled = true; // Default value for notifications
+  bool isNotificationsEnabled = true; // Default value for notifications toggle
 
   @override
   Widget build(BuildContext context) {
@@ -44,14 +44,11 @@ class _AppSettingsScreenState extends State<AppSettingsScreen> {
             },
           ),
           _buildSectionHeader('About'),
-          _buildListTile('Device Info', Icons.info, () {
-            Navigator.pushNamed(context, '/deviceinfo');
+          _buildListTile('Device Info', Icons.system_update, () {
+            Navigator.pushNamed(context, '/deviceInfo');
           }),
           _buildListTile('App Version', Icons.system_update, () {
             Navigator.pushNamed(context, '/appversion');
-          }),
-          _buildListTile('Appearance', Icons.palette, () {
-            Navigator.pushNamed(context, '/appearance');
           }),
         ],
       ),

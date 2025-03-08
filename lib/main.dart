@@ -14,6 +14,7 @@ import 'screens/profile_screen.dart';
 import 'screens/language_screen.dart';
 import 'screens/appearance_screen.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'DeviceInfoScreen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -50,6 +51,7 @@ class MyApp extends StatelessWidget {
               '/language': (context) => LanguagesScreen(),
               '/appearance': (context) => AppearanceScreen(),
               '/profile': (context) => ProfileScreen(),
+              '/deviceInfo': (context) => DeviceInfoScreen(),
             },
           );
         },
