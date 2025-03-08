@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert'; // For encoding/decoding JSON
 import '../forgot_password_screen.dart';
 
 class SignUpScreen extends StatefulWidget {
@@ -26,6 +28,47 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   bool isValidPhone(String phone) {
     return RegExp(r'^[0-9]{10,}$').hasMatch(phone);
+  }
+
+  // Function to send signup data to the backend
+  Future<void> _signUp() async {
+    if (_formKey.currentState!.validate()) {
+      // Prepare the data to send
+      final Map<String, dynamic> signUpData = {
+        "name": nameController.text,
+        "email": emailController.text,
+        "phone": phoneController.text,
+        "password": passwordController.text,
+      };
+
+      try {
+        // Send POST request to the backend
+        final response = await http.post(
+          Uri.parse('http://localhost:5000/api/auth/signup'), 
+          headers: <String, String>{
+            'Content-Type': 'application/json; charset=UTF-8',
+          },
+          body: jsonEncode(signUpData),
+        );
+
+        // Check the response status
+        if (response.statusCode == 201) {
+          // Success: Navigate to the home screen
+          Navigator.pushReplacementNamed(context, '/home');
+        } else {
+          // Handle errors
+          final responseData = jsonDecode(response.body);
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(responseData['message'])),
+          );
+        }
+      } catch (error) {
+        // Handle network errors
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Network error: $error')),
+        );
+      }
+    }
   }
 
   @override
@@ -122,11 +165,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 const SizedBox(height: 20),
 
                 ElevatedButton(
-                  onPressed: () {
-                    if (_formKey.currentState!.validate()) {
-                      Navigator.pushReplacementNamed(context, '/home');
-                    }
-                  },
+                  onPressed: _signUp, // Call the signup function
                   style: ElevatedButton.styleFrom(
                     backgroundColor: primaryColor,
                     foregroundColor: Colors.white,
