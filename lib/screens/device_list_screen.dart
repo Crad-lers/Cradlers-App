@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../DashboardScreen.dart';
+import 'DashboardScreen.dart';
 
 class DeviceListScreen extends StatelessWidget {
   const DeviceListScreen({super.key});

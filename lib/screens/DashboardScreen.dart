@@ -190,7 +190,7 @@ class DashboardScreen extends StatelessWidget {
       },
     },
     {
-      'label': "Settings",
+      'label': "Control Limit",
       'icon': Icons.settings,
       'onTap': (BuildContext context) => () {
         Navigator.push(context, MaterialPageRoute(builder: (context) => SettingsPage()));
