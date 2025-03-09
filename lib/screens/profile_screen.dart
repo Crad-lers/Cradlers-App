@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shimmer/shimmer.dart';
 import 'changepasswordscreen.dart'; // Ensure this import is correct
+import 'login_screen.dart'; // Ensure this import is correct
 
 class ProfileScreen extends StatefulWidget {
   @override
@@ -117,7 +117,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       leading: Icon(icon, color: isLogout ? Colors.red : Colors.black87, size: 24),
       title: Text(title, style: TextStyle(fontSize: 16, color: isLogout ? Colors.red : Colors.black87)),
-      onTap: onTap,
+      onTap: isLogout ? () {
+        // Navigate to the login screen and clear the stack
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (context) => SignInScreen()),
+          (Route<dynamic> route) => false,
+        );
+      } : onTap,
       trailing: const Icon(Icons.arrow_forward_ios, size: 18, color: Colors.black38),
     );
   }
