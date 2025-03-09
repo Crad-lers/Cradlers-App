@@ -100,7 +100,9 @@ class _AddDeviceScreenState extends State<AddDeviceScreen> {
               DropdownButtonFormField<String>(
                 value: _connectionType,
                 onChanged: (String? newValue) {
-                  setState(() => _connectionType = newValue!);
+                  setState(() {
+                    _connectionType = newValue!;
+                  });
                 },
                 items: <String>['Bluetooth', 'WiFi']
                     .map<DropdownMenuItem<String>>((String value) {
@@ -113,6 +115,12 @@ class _AddDeviceScreenState extends State<AddDeviceScreen> {
                   labelText: 'Connection Type',
                   border: OutlineInputBorder(),
                 ),
+              ),
+              SizedBox(height: 10),
+              Text(
+                'Ensure your device is connected via ${_connectionType} before adding.',
+                style: TextStyle(color: Colors.red, fontSize: 14),
+                textAlign: TextAlign.center,
               ),
               SizedBox(height: 20),
               DropdownButtonFormField<String>(
@@ -157,7 +165,7 @@ class _AddDeviceScreenState extends State<AddDeviceScreen> {
                   onPressed: _submitForm,
                   child: Text('Add Device'),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Color(0xFF39CCCC),
+                    backgroundColor: Color(0xFF39CCCC), // Teal color
                   ),
                 ),
             ],
