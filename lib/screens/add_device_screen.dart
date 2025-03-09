@@ -1,15 +1,20 @@
 import 'package:flutter/material.dart';
 
-class AddDeviceScreen extends StatelessWidget {
+class AddDeviceScreen extends StatefulWidget {
   const AddDeviceScreen({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    // Text controllers to capture input
-    final TextEditingController _deviceNameController = TextEditingController();
-    final TextEditingController _deviceDescriptionController = TextEditingController();
-    String connectionType = 'Bluetooth'; // Default connection type
+  _AddDeviceScreenState createState() => _AddDeviceScreenState();
+}
 
+class _AddDeviceScreenState extends State<AddDeviceScreen> {
+  // Text controllers to capture input
+  final TextEditingController _deviceNameController = TextEditingController();
+  final TextEditingController _deviceDescriptionController = TextEditingController();
+  String connectionType = 'Bluetooth'; // Default connection type
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Add New Device'),
@@ -42,9 +47,9 @@ class AddDeviceScreen extends StatelessWidget {
             DropdownButton<String>(
               value: connectionType,
               onChanged: (String? newValue) {
-                if (newValue != null) {
-                  connectionType = newValue;
-                }
+                setState(() {
+                  connectionType = newValue!;
+                });
               },
               items: <String>['Bluetooth', 'WiFi']
                   .map<DropdownMenuItem<String>>((String value) {
@@ -73,7 +78,7 @@ class AddDeviceScreen extends StatelessWidget {
               },
               child: Text('Add Device'),
               style: ElevatedButton.styleFrom(
-                backgroundColor: Color(0xFF39CCCC), // Using the same teal color
+                backgroundColor: Color(0xFF39CCCC), // Teal color
               ),
             ),
           ],
