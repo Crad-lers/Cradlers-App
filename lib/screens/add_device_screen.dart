@@ -11,6 +11,7 @@ class _AddDeviceScreenState extends State<AddDeviceScreen> {
   // Text controllers to capture input
   final TextEditingController _deviceNameController = TextEditingController();
   final TextEditingController _deviceDescriptionController = TextEditingController();
+  final TextEditingController _serialNumberController = TextEditingController(); // Controller for serial number
   String connectionType = 'Bluetooth'; // Default connection type
 
   @override
@@ -44,6 +45,15 @@ class _AddDeviceScreenState extends State<AddDeviceScreen> {
               ),
             ),
             SizedBox(height: 20),
+            TextField(
+              controller: _serialNumberController,
+              decoration: InputDecoration(
+                labelText: 'Serial Number',
+                border: OutlineInputBorder(),
+                hintText: 'Enter the serial number of the device',
+              ),
+            ),
+            SizedBox(height: 20),
             DropdownButton<String>(
               value: connectionType,
               onChanged: (String? newValue) {
@@ -69,10 +79,11 @@ class _AddDeviceScreenState extends State<AddDeviceScreen> {
             ElevatedButton(
               onPressed: () {
                 // Logic to handle adding the device
-                print('Device Added: ${_deviceNameController.text} via $connectionType');
+                print('Device Added: ${_deviceNameController.text}, Serial: ${_serialNumberController.text} via $connectionType');
                 // Clear the text fields
                 _deviceNameController.clear();
                 _deviceDescriptionController.clear();
+                _serialNumberController.clear(); // Clear the serial number input
                 // Optionally pop the screen
                 Navigator.pop(context);
               },
