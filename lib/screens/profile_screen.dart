@@ -75,12 +75,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
           const SizedBox(height: 10),
           const Text(
-            "John Doe",
+            "Suvin Kulasinghe",
             style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white),
           ),
           const SizedBox(height: 4),
           const Text(
-            "johndoe@example.com",
+            "suvinkulasinghe@gmail.com",
             style: TextStyle(fontSize: 14, color: Colors.white70),
           ),
         ],
@@ -137,9 +137,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
           children: [
             _buildInfoRow("Phone", "+123 456 7890"),
             _buildDivider(),
-            _buildInfoRow("Location", "New York, USA"),
+            _buildInfoRow("Location", "Ja Ela, Sri Lanka"),
             _buildDivider(),
-            _buildInfoRow("Bio", "Flutter Developer | Tech Enthusiast"),
+            _buildInfoRow("Bio", "Full time DAD"),
           ],
         ),
       ),
