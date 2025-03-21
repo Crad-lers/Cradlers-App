@@ -42,3 +42,10 @@ android {
 flutter {
     source = "../.."
 }
+
+plugins {
+    id("com.android.application")
+    kotlin("android")
+    id("com.google.gms.google-services") // ADD THIS
+}
+
