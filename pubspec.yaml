@@ -9,7 +9,6 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-    http: ^1.3.0
 
   # Firebase and core features
   firebase_core: ^3.12.1
