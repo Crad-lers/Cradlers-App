@@ -1,4 +1,8 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:http/http.dart' as http;
+import 'package:firebase_auth/firebase_auth.dart';
 
 class SwingControlScreen extends StatefulWidget {
   const SwingControlScreen({super.key});
@@ -10,6 +14,79 @@ class SwingControlScreen extends StatefulWidget {
 class _SwingControlScreenState extends State<SwingControlScreen> {
   String swingMode = "Auto"; // Default mode
   bool musicWhileSwinging = false; // Default music OFF
+
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadPreferences();
+  }
+
+  // Load preferences from Firestore
+  Future<void> _loadPreferences() async {
+    User? user = _auth.currentUser;
+    if (user != null) {
+      DocumentSnapshot snapshot = await _firestore.collection('userPreferences').doc(user.uid).get();
+      if (snapshot.exists) {
+        setState(() {
+          swingMode = snapshot['swingMode'] ?? 'Auto';
+          musicWhileSwinging = snapshot['musicMode'] ?? false;
+        });
+      }
+    }
+  }
+
+  // Save preferences to Firestore
+  Future<void> _savePreferences() async {
+    User? user = _auth.currentUser;
+    if (user != null) {
+      await _firestore.collection('userPreferences').doc(user.uid).set({
+        'swingMode': swingMode,
+        'musicMode': musicWhileSwinging,
+      });
+    }
+  }
+
+  // Your Raspberry Pi backend IP
+  final String baseUrl = "http://<RASPBERRY_PI_IP>:5000"; 
+
+  // Control swing mode
+  Future<void> _controlSwing(String mode) async {
+    final response = await http.post(
+      Uri.parse('$baseUrl/swing'),
+      headers: {'Content-Type': 'application/json'},
+      body: json.encode({'mode': mode}),
+    );
+    if (response.statusCode == 200) {
+      print("Swing mode set to: $mode");
+      setState(() {
+        swingMode = mode;
+      });
+      _savePreferences(); // Save to Firebase
+    } else {
+      print("Failed to set swing mode");
+    }
+  }
+
+  // Control music while swinging
+  Future<void> _controlMusic(bool music) async {
+    final response = await http.post(
+      Uri.parse('$baseUrl/music'),
+      headers: {'Content-Type': 'application/json'},
+      body: json.encode({'music': music}),
+    );
+    if (response.statusCode == 200) {
+      print("Music turned ${music ? 'ON' : 'OFF'}");
+      setState(() {
+        musicWhileSwinging = music;
+      });
+      _savePreferences(); // Save to Firebase
+    } else {
+      print("Failed to control music");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -114,6 +191,7 @@ class _SwingControlScreenState extends State<SwingControlScreen> {
         setState(() {
           swingMode = label;
         });
+        _controlSwing(label); // Send request to control swing
       },
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
@@ -124,13 +202,13 @@ class _SwingControlScreenState extends State<SwingControlScreen> {
           borderRadius: BorderRadius.circular(30),
           boxShadow: isSelected
               ? [
-            BoxShadow(
-              color: buttonColor.withOpacity(0.6),
-              blurRadius: 10,
-              spreadRadius: 2,
-              offset: const Offset(0, 4),
-            ),
-          ]
+                  BoxShadow(
+                    color: buttonColor.withOpacity(0.6),
+                    blurRadius: 10,
+                    spreadRadius: 2,
+                    offset: const Offset(0, 4),
+                  ),
+                ]
               : [],
         ),
         child: Center(
@@ -156,6 +234,7 @@ class _SwingControlScreenState extends State<SwingControlScreen> {
         setState(() {
           musicWhileSwinging = value;
         });
+        _controlMusic(value); // Send request to control music
       },
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
@@ -167,13 +246,13 @@ class _SwingControlScreenState extends State<SwingControlScreen> {
           border: Border.all(color: isSelected ? Colors.transparent : Colors.black),
           boxShadow: isSelected
               ? [
-            BoxShadow(
-              color: (value ? Colors.green : Colors.red).withOpacity(0.5),
-              blurRadius: 10,
-              spreadRadius: 2,
-              offset: const Offset(0, 4),
-            ),
-          ]
+                  BoxShadow(
+                    color: (value ? Colors.green : Colors.red).withOpacity(0.5),
+                    blurRadius: 10,
+                    spreadRadius: 2,
+                    offset: const Offset(0, 4),
+                  ),
+                ]
               : [],
         ),
         child: Center(
