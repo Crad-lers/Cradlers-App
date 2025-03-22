@@ -1,11 +1,31 @@
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'dart:math';
 
-class HealthScreen extends StatelessWidget {
+class HealthScreen extends StatefulWidget {
   const HealthScreen({super.key});
 
-  final double bodyTemperature = 36.4; // Dummy data
-  final double oxygenLevel = 20; // Dummy data
+  @override
+  _HealthScreenState createState() => _HealthScreenState();
+}
+
+class _HealthScreenState extends State<HealthScreen> {
+  final DatabaseReference dbRef = FirebaseDatabase.instance.ref('healthData');  // Ensure this matches your Firebase setup
+
+  double bodyTemperature = 36.4; // Initial default value
+  double oxygenLevel = 20; // Initial default value
+
+  @override
+  void initState() {
+    super.initState();
+    dbRef.onValue.listen((event) {
+      final data = event.snapshot.value as Map<dynamic, dynamic>;
+      setState(() {
+        bodyTemperature = double.parse(data['bodyTemperature'].toString());
+        oxygenLevel = double.parse(data['oxygenLevel'].toString());
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,10 +46,9 @@ class HealthScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Logo and Title
             Row(
               children: [
-                Image.asset('assets/logo.png', height: 40), // Logo
+                Image.asset('assets/logo.png', height: 40), // Ensure this asset is in your project
                 const SizedBox(width: 10),
                 const Text(
                   "Cradlers",
@@ -38,28 +57,24 @@ class HealthScreen extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 20),
-
-            // Page Title
             const Text(
               "Health Overview",
               style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 20),
-
             _buildHealthCard(
               title: "Body Temperature",
-              value: "$bodyTemperature°C",
+              value: "${bodyTemperature.toStringAsFixed(1)}°C",
               icon: Icons.thermostat,
               iconColor: Colors.green,
-              progress: (bodyTemperature - 32) / 8,
+              progress: (bodyTemperature - 32) / 8,  // Adjust this formula as needed
               safeColor: Colors.green,
               dangerColor: Colors.red,
             ),
             const SizedBox(height: 20),
-
             _buildHealthCard(
               title: "Oxygen Level",
-              value: "$oxygenLevel%",
+              value: "${oxygenLevel.toStringAsFixed(1)}%",
               icon: Icons.bubble_chart,
               iconColor: Colors.red,
               progress: oxygenLevel / 100,
@@ -160,7 +175,6 @@ class _AnimatedWaveIndicatorState extends State<AnimatedWaveIndicator> with Sing
       child: Stack(
         alignment: Alignment.center,
         children: [
-          // Background Circle
           Container(
             width: screenSize,
             height: screenSize,
@@ -176,7 +190,6 @@ class _AnimatedWaveIndicatorState extends State<AnimatedWaveIndicator> with Sing
               ],
             ),
           ),
-          // Animated Wave
           ClipOval(
             child: AnimatedBuilder(
               animation: _controller,
@@ -189,7 +202,6 @@ class _AnimatedWaveIndicatorState extends State<AnimatedWaveIndicator> with Sing
               child: SizedBox(width: screenSize, height: screenSize),
             ),
           ),
-          // Center Content (Icon & Text)
           widget.child,
         ],
       ),
@@ -197,7 +209,6 @@ class _AnimatedWaveIndicatorState extends State<AnimatedWaveIndicator> with Sing
   }
 }
 
-// Wave Painter for Animated Water Effect
 class WavePainter extends CustomPainter {
   final double progress;
   final double animationValue;

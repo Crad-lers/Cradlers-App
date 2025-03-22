@@ -1,4 +1,5 @@
-import 'package:camera/camera.dart';
+import 'dart:html';
+import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 
 class CameraViewPage extends StatefulWidget {
@@ -7,32 +8,23 @@ class CameraViewPage extends StatefulWidget {
 }
 
 class _CameraViewPageState extends State<CameraViewPage> {
-  CameraController? _controller;
-  List<CameraDescription>? cameras;
-  bool _isCameraInitialized = false;
+  late String _viewId;
 
   @override
   void initState() {
     super.initState();
-    _initializeCamera();
-  }
 
-  Future<void> _initializeCamera() async {
-    cameras = await availableCameras();
-    if (cameras != null && cameras!.isNotEmpty) {
-      _controller = CameraController(cameras![0], ResolutionPreset.high);
-      await _controller!.initialize();
-      if (!mounted) return;
-      setState(() {
-        _isCameraInitialized = true;
-      });
-    }
-  }
+    _viewId = 'mjpeg-view-${DateTime.now().millisecondsSinceEpoch}';
 
-  @override
-  void dispose() {
-    _controller?.dispose();
-    super.dispose();
+    // Register an HTML <img> tag to show the MJPEG stream
+    ui.platformViewRegistry.registerViewFactory(_viewId, (int viewId) {
+      final image = ImageElement()
+        ..src = 'http://192.168.8.108:5050/video' // <-- replace with your stream
+        ..style.width = '100%'
+        ..style.height = '100%'
+        ..style.objectFit = 'cover';
+      return image;
+    });
   }
 
   @override
@@ -51,7 +43,7 @@ class _CameraViewPageState extends State<CameraViewPage> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           SizedBox(height: 10),
-          Image.asset('assets/logo.png', height: 40), // Add your logo here
+          Image.asset('assets/logo.png', height: 40),
           SizedBox(height: 10),
           Text(
             'Camera View',
@@ -81,12 +73,7 @@ class _CameraViewPageState extends State<CameraViewPage> {
                 ],
               ),
               clipBehavior: Clip.hardEdge,
-              child: _isCameraInitialized
-                  ? AspectRatio(
-                aspectRatio: _controller!.value.aspectRatio,
-                child: CameraPreview(_controller!),
-              )
-                  : Center(child: CircularProgressIndicator()),
+              child: HtmlElementView(viewType: _viewId),
             ),
           ),
           SizedBox(height: 20),
@@ -97,13 +84,10 @@ class _CameraViewPageState extends State<CameraViewPage> {
                 children: [
                   FloatingActionButton(
                     backgroundColor: Colors.red,
-                    onPressed: () async {
-                      if (_controller != null && _controller!.value.isInitialized) {
-                        XFile file = await _controller!.takePicture();
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('Recording started')),
-                        );
-                      }
+                    onPressed: () {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Record button pressed')),
+                      );
                     },
                     child: Icon(Icons.circle, color: Colors.white),
                   ),
@@ -116,7 +100,11 @@ class _CameraViewPageState extends State<CameraViewPage> {
                 children: [
                   FloatingActionButton(
                     backgroundColor: Colors.black,
-                    onPressed: () {},
+                    onPressed: () {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Mic button pressed')),
+                      );
+                    },
                     child: Icon(Icons.mic, color: Colors.white),
                   ),
                   SizedBox(height: 5),
