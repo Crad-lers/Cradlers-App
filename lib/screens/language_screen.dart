@@ -6,35 +6,56 @@ class LanguagesScreen extends StatefulWidget {
 }
 
 class _LanguagesScreenState extends State<LanguagesScreen> {
-  String? selectedLanguage = 'English'; // Default selection, you can save this preference using SharedPreferences or a similar approach
+  String? selectedLanguage = 'English';
+  final List<String> languages = ['English', 'Spanish', 'French', 'German', 'Chinese'];
 
   @override
   Widget build(BuildContext context) {
-    final List<String> languages = ['English', 'Spanish', 'French', 'German', 'Chinese']; // Example languages
-
     return Scaffold(
       appBar: AppBar(
-        title: Text('Select Language'),
-        backgroundColor: Colors.blue, // Or any other appropriate color
+        title: const Text('Select Language'),
+        backgroundColor: const Color(0xFF39CCCC), // Your theme color
+        elevation: 2,
       ),
-      body: ListView.builder(
-        itemCount: languages.length,
-        itemBuilder: (context, index) {
-          return Card(
-            child: ListTile(
-              title: Text(languages[index]),
-              trailing: selectedLanguage == languages[index] ? Icon(Icons.check, color: Colors.green) : null,
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: ListView.separated(
+          itemCount: languages.length,
+          separatorBuilder: (context, index) => SizedBox(height: 12),
+          itemBuilder: (context, index) {
+            final lang = languages[index];
+            return GestureDetector(
               onTap: () {
                 setState(() {
-                  selectedLanguage = languages[index];
-                  // Here you would also call your logic to change the app's language
-                  print('Language changed to ${languages[index]}');
+                  selectedLanguage = lang;
+                  print('Language changed to $lang');
                 });
               },
-            ),
-          );
-        },
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.2),
+                      spreadRadius: 2,
+                      blurRadius: 5,
+                      offset: Offset(0, 3),
+                    )
+                  ],
+                ),
+                child: ListTile(
+                  title: Text(lang, style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
+                  trailing: selectedLanguage == lang
+                      ? Icon(Icons.check_circle, color: Color(0xFF39CCCC))
+                      : Icon(Icons.radio_button_off, color: Colors.grey),
+                ),
+              ),
+            );
+          },
+        ),
       ),
+      backgroundColor: const Color(0xFFFDF5FB), // Match the soft background tone
     );
   }
 }
