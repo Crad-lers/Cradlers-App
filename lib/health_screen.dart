@@ -10,20 +10,29 @@ class HealthScreen extends StatefulWidget {
 }
 
 class _HealthScreenState extends State<HealthScreen> {
-  final DatabaseReference dbRef = FirebaseDatabase.instance.ref('healthData');  // Ensure this matches your Firebase setup
+  final DatabaseReference dbRef = FirebaseDatabase.instance.ref('sensorData');
 
-  double bodyTemperature = 36.4; // Initial default value
-  double oxygenLevel = 20; // Initial default value
+  double bodyTemperature = 36.4;
+  double oxygenLevel = 20;
+  bool hasError = false;
 
   @override
   void initState() {
     super.initState();
     dbRef.onValue.listen((event) {
-      final data = event.snapshot.value as Map<dynamic, dynamic>;
-      setState(() {
-        bodyTemperature = double.parse(data['bodyTemperature'].toString());
-        oxygenLevel = double.parse(data['oxygenLevel'].toString());
-      });
+      final data = event.snapshot.value;
+
+      if (data != null && data is Map<dynamic, dynamic>) {
+        setState(() {
+          bodyTemperature = double.tryParse(data['temperature'].toString()) ?? bodyTemperature;
+          oxygenLevel = double.tryParse(data['humidity'].toString()) ?? oxygenLevel;
+          hasError = false;
+        });
+      } else {
+        setState(() {
+          hasError = true;
+        });
+      }
     });
   }
 
@@ -43,46 +52,53 @@ class _HealthScreenState extends State<HealthScreen> {
       ),
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Image.asset('assets/logo.png', height: 40), // Ensure this asset is in your project
-                const SizedBox(width: 10),
-                const Text(
-                  "Cradlers",
-                  style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+        child: hasError
+            ? const Center(
+                child: Text(
+                  "System error",
+                  style: TextStyle(fontSize: 24, color: Colors.red),
                 ),
-              ],
-            ),
-            const SizedBox(height: 20),
-            const Text(
-              "Health Overview",
-              style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 20),
-            _buildHealthCard(
-              title: "Body Temperature",
-              value: "${bodyTemperature.toStringAsFixed(1)}°C",
-              icon: Icons.thermostat,
-              iconColor: Colors.green,
-              progress: (bodyTemperature - 32) / 8,  // Adjust this formula as needed
-              safeColor: Colors.green,
-              dangerColor: Colors.red,
-            ),
-            const SizedBox(height: 20),
-            _buildHealthCard(
-              title: "Oxygen Level",
-              value: "${oxygenLevel.toStringAsFixed(1)}%",
-              icon: Icons.bubble_chart,
-              iconColor: Colors.red,
-              progress: oxygenLevel / 100,
-              safeColor: Colors.green,
-              dangerColor: Colors.red,
-            ),
-          ],
-        ),
+              )
+            : Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Image.asset('assets/logo.png', height: 40),
+                      const SizedBox(width: 10),
+                      const Text(
+                        "Cradlers",
+                        style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+                  const Text(
+                    "Health Overview",
+                    style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 20),
+                  _buildHealthCard(
+                    title: "Body Temperature",
+                    value: "${bodyTemperature.toStringAsFixed(1)}°C",
+                    icon: Icons.thermostat,
+                    iconColor: Colors.green,
+                    progress: (bodyTemperature - 32) / 8,
+                    safeColor: Colors.green,
+                    dangerColor: Colors.red,
+                  ),
+                  const SizedBox(height: 20),
+                  _buildHealthCard(
+                    title: "Oxygen Level",
+                    value: "${oxygenLevel.toStringAsFixed(1)}%",
+                    icon: Icons.bubble_chart,
+                    iconColor: Colors.red,
+                    progress: oxygenLevel / 100,
+                    safeColor: Colors.green,
+                    dangerColor: Colors.red,
+                  ),
+                ],
+              ),
       ),
     );
   }
@@ -106,7 +122,7 @@ class _HealthScreenState extends State<HealthScreen> {
         const SizedBox(height: 10),
         Center(
           child: AnimatedWaveIndicator(
-            value: progress,
+            value: progress.clamp(0.0, 1.0),
             safeColor: safeColor,
             dangerColor: dangerColor,
             child: Column(
@@ -127,9 +143,8 @@ class _HealthScreenState extends State<HealthScreen> {
   }
 }
 
-// Animated Wave Progress Indicator
 class AnimatedWaveIndicator extends StatefulWidget {
-  final double value; // Value range: 0.0 - 1.0
+  final double value;
   final Color safeColor;
   final Color dangerColor;
   final Widget child;

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class AddDeviceScreen extends StatefulWidget {
   const AddDeviceScreen({Key? key}) : super(key: key);
@@ -9,28 +11,60 @@ class AddDeviceScreen extends StatefulWidget {
 
 class _AddDeviceScreenState extends State<AddDeviceScreen> {
   final _formKey = GlobalKey<FormState>();
+
   final TextEditingController _deviceNameController = TextEditingController();
   final TextEditingController _deviceDescriptionController = TextEditingController();
   final TextEditingController _serialNumberController = TextEditingController();
-  final TextEditingController _customLocationController = TextEditingController();
+  final TextEditingController _locationController = TextEditingController();
 
-  String _connectionType = 'Bluetooth';
-  List<String> _locations = ['Master Bedroom', 'Living Room', 'Kitchen', 'Bathroom'];
-  String _currentLocation = 'Master Bedroom';
   bool _isLoading = false;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  void _submitForm() {
+  void _submitForm() async {
     if (_formKey.currentState!.validate()) {
       setState(() => _isLoading = true);
-      // Simulate a network request
-      Future.delayed(Duration(seconds: 2), () {
+
+      try {
+        final user = FirebaseAuth.instance.currentUser;
+
+        if (user == null) {
+          throw Exception("User not logged in");
+        }
+
+        final uid = user.uid;
+
+        await _firestore
+            .collection('users')
+            .doc(uid)
+            .collection('devices')
+            .add({
+          'deviceName': _deviceNameController.text,
+          'deviceDescription': _deviceDescriptionController.text,
+          'serialNumber': _serialNumberController.text,
+          'location': _locationController.text,
+          'timestamp': FieldValue.serverTimestamp(),
+        });
+
         setState(() => _isLoading = false);
         _clearForm();
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('Device successfully added!'),
-          backgroundColor: Colors.green,
-        ));
-      });
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Device successfully added!'),
+            backgroundColor: Colors.green,
+          ),
+        );
+
+        Navigator.pop(context); // Return to device list or previous screen
+      } catch (error) {
+        setState(() => _isLoading = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to add device: $error'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
     }
   }
 
@@ -38,136 +72,86 @@ class _AddDeviceScreenState extends State<AddDeviceScreen> {
     _deviceNameController.clear();
     _deviceDescriptionController.clear();
     _serialNumberController.clear();
-    _customLocationController.clear();
-  }
-
-  void _addCustomLocation() {
-    final text = _customLocationController.text;
-    if (text.isNotEmpty && !_locations.contains(text)) {
-      setState(() {
-        _locations.add(text);
-        _currentLocation = text;
-      });
-      _customLocationController.clear();
-    }
+    _locationController.clear();
   }
 
   @override
   Widget build(BuildContext context) {
+    final primaryColor = Color(0xFF39CCCC);
+
     return Scaffold(
       appBar: AppBar(
-        title: Text('Add New Device'),
+        title: const Text('Add New Device'),
         centerTitle: true,
         backgroundColor: Colors.white,
         elevation: 0,
+        iconTheme: const IconThemeData(color: Colors.black),
       ),
       body: SingleChildScrollView(
-        padding: EdgeInsets.all(20),
+        padding: const EdgeInsets.all(20),
         child: Form(
           key: _formKey,
           child: Column(
             children: [
+              // Device Name
               TextFormField(
                 controller: _deviceNameController,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'Device Name',
                   border: OutlineInputBorder(),
                   hintText: 'Enter the name of the device',
                 ),
                 validator: (value) => value!.isEmpty ? 'Please enter a device name' : null,
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
+
+              // Device Description
               TextFormField(
                 controller: _deviceDescriptionController,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'Description',
                   border: OutlineInputBorder(),
                   hintText: 'Enter a description for the device',
                 ),
                 validator: (value) => value!.isEmpty ? 'Please enter a description' : null,
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
+
+              // Serial Number
               TextFormField(
                 controller: _serialNumberController,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'Serial Number',
                   border: OutlineInputBorder(),
                   hintText: 'Enter the serial number of the device',
                 ),
                 validator: (value) => value!.isEmpty ? 'Please enter a serial number' : null,
               ),
-              SizedBox(height: 20),
-              DropdownButtonFormField<String>(
-                value: _connectionType,
-                onChanged: (String? newValue) {
-                  setState(() {
-                    _connectionType = newValue!;
-                  });
-                },
-                items: <String>['Bluetooth', 'WiFi']
-                    .map<DropdownMenuItem<String>>((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList(),
-                decoration: InputDecoration(
-                  labelText: 'Connection Type',
+              const SizedBox(height: 20),
+
+              // Location
+              TextFormField(
+                controller: _locationController,
+                decoration: const InputDecoration(
+                  labelText: 'Location',
                   border: OutlineInputBorder(),
+                  hintText: 'Enter the location of the cradle',
                 ),
+                validator: (value) => value!.isEmpty ? 'Please enter a location' : null,
               ),
-              SizedBox(height: 10),
-              Text(
-                'Ensure your device is connected via ${_connectionType} before adding.',
-                style: TextStyle(color: Colors.red, fontSize: 14),
-                textAlign: TextAlign.center,
-              ),
-              SizedBox(height: 20),
-              DropdownButtonFormField<String>(
-                value: _currentLocation,
-                onChanged: (String? newValue) {
-                  setState(() => _currentLocation = newValue!);
-                },
-                items: _locations
-                    .map<DropdownMenuItem<String>>((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList(),
-                decoration: InputDecoration(
-                  labelText: 'Device Location',
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              Row(
-                children: [
-                  Expanded(
-                    child: TextFormField(
-                      controller: _customLocationController,
-                      decoration: InputDecoration(
-                        labelText: 'Add Custom Location',
-                        hintText: 'e.g., Guest Room',
+              const SizedBox(height: 20),
+
+              // Submit Button or Loader
+              _isLoading
+                  ? const CircularProgressIndicator()
+                  : ElevatedButton(
+                      onPressed: _submitForm,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: primaryColor,
+                        padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 14),
                       ),
+                      child: const Text('Add Device'),
                     ),
-                  ),
-                  IconButton(
-                    icon: Icon(Icons.add),
-                    onPressed: _addCustomLocation,
-                  ),
-                ],
-              ),
-              SizedBox(height: 20),
-              if (_isLoading)
-                CircularProgressIndicator()
-              else
-                ElevatedButton(
-                  onPressed: _submitForm,
-                  child: Text('Add Device'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Color(0xFF39CCCC), // Teal color
-                  ),
-                ),
             ],
           ),
         ),
