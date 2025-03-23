@@ -26,5 +26,7 @@
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
 	<string>1:726880339466:ios:00b511ed0616ec3e6bc1f3</string>
+	<key>DATABASE_URL</key>
+	<string>https://cradlers-69c8b-default-rtdb.asia-southeast1.firebasedatabase.app</string>
 </dict>
 </plist>

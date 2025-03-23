@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:provider/provider.dart';
+
+import 'firebase_options.dart';
 import 'theme_provider.dart';
 import 'screens/home_screen.dart';
 import 'screens/splash_screen.dart';
@@ -15,29 +16,19 @@ import 'screens/changepasswordscreen.dart';
 import 'screens/profile_screen.dart';
 import 'screens/language_screen.dart';
 import 'screens/appearance_screen.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'screens/DeviceInfoScreen.dart';
 import 'screens/AppVersionScreen.dart';
-
-const firebaseWebOptions = FirebaseOptions(
-  apiKey: "AIzaSyBvWkdSJk8kwkrs6nT0c9dTBt9_lDnTECg",
-  authDomain: "cradlers-69c8b.firebaseapp.com",
-  projectId: "cradlers-69c8b",
-  storageBucket: "cradlers-69c8b.firebasestorage.app",
-  messagingSenderId: "726880339466",
-  appId: "1:726880339466:web:f0bdbfdd852e144d6bc1f3",
-  measurementId: "G-4Y72VJRG77",
-);
+import 'package:google_fonts/google_fonts.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  if (kIsWeb) {
-    await Firebase.initializeApp(options: firebaseWebOptions);
-  } else {
-    await Firebase.initializeApp(); // Uses google-services.json or .plist
-  }
+  // ✅ Use the generated Firebase config for all platforms (Web, Android, iOS)
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
 
+  // Load theme preferences
   ThemeProvider themeProvider = ThemeProvider(ThemeData.light());
   await themeProvider.loadThemeFromPrefs();
 
