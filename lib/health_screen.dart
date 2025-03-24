@@ -40,6 +40,10 @@ class _HealthScreenState extends State<HealthScreen> {
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
 
+    // Determine wave color (safe: green, danger: red)
+    bool isTempSafe = temperature >= 20 && temperature <= 33;
+    Color temperatureWaveColor = isTempSafe ? Colors.green : Colors.red;
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -64,7 +68,7 @@ class _HealthScreenState extends State<HealthScreen> {
                 children: [
                   Row(
                     children: [
-                      Image.asset('assets/logo.png', height: 40),
+                      Image.asset('assets/logo.png', height: 90),
                       const SizedBox(width: 10),
                       const Text(
                         "Cradlers",
@@ -77,27 +81,37 @@ class _HealthScreenState extends State<HealthScreen> {
                     "Health Overview",
                     style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 30), // Top padding before cards
 
-                  // Temperature Card
-                  _buildHealthCard(
-                    title: "Temperature",
-                    value: "${temperature.toStringAsFixed(1)}°C",
-                    icon: Icons.thermostat,
-                    isValueSafe: temperature >= 20 && temperature <= 33,
-                    progress: (temperature - 9) / 31,
+                  // All cards with vertical spacing
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 20),
+                    child: Column(
+                      children: [
+                        _buildHealthCard(
+                          title: "Temperature",
+                          value: "${temperature.toStringAsFixed(1)}°C",
+                          icon: Icons.thermostat,
+                          iconColor: Colors.black,
+                          textColor: Colors.black,
+                          waveColor: temperatureWaveColor,
+                          progress: (temperature - 9) / 31,
+                        ),
+                        const SizedBox(height: 40), // Spacing between cards
+                        _buildHealthCard(
+                          title: "Humidity Level",
+                          value: "${humidityLevel.toStringAsFixed(1)}%",
+                          icon: Icons.water_drop,
+                          iconColor: Colors.blue,
+                          textColor: Colors.black,
+                          waveColor: Colors.blue,
+                          progress: humidityLevel / 100,
+                        ),
+                      ],
+                    ),
                   ),
 
-                  const SizedBox(height: 20),
-
-                  // Humidity Card
-                  _buildHealthCard(
-                    title: "Humidity Level",
-                    value: "${humidityLevel.toStringAsFixed(1)}%",
-                    icon: Icons.water_drop,
-                    isValueSafe: humidityLevel >= 30 && humidityLevel <= 70,
-                    progress: humidityLevel / 100,
-                  ),
+                  const SizedBox(height: 30), // Bottom spacing after cards
                 ],
               ),
       ),
@@ -108,13 +122,11 @@ class _HealthScreenState extends State<HealthScreen> {
     required String title,
     required String value,
     required IconData icon,
-    required bool isValueSafe,
+    required Color iconColor,
+    required Color textColor,
+    required Color waveColor,
     required double progress,
   }) {
-    Color safeColor = Colors.green;
-    Color dangerColor = Colors.red;
-    Color iconColor = isValueSafe ? safeColor : dangerColor;
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -126,7 +138,7 @@ class _HealthScreenState extends State<HealthScreen> {
         Center(
           child: AnimatedWaveIndicator(
             value: progress.clamp(0.0, 1.0),
-            fillColor: iconColor,
+            fillColor: waveColor,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -134,7 +146,7 @@ class _HealthScreenState extends State<HealthScreen> {
                 const SizedBox(height: 5),
                 Text(
                   value,
-                  style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: textColor),
                 ),
               ],
             ),
