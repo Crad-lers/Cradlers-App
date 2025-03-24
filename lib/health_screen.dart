@@ -12,7 +12,7 @@ class HealthScreen extends StatefulWidget {
 class _HealthScreenState extends State<HealthScreen> {
   final DatabaseReference dbRef = FirebaseDatabase.instance.ref('sensorData');
 
-  double bodyTemperature = 36.4;
+  double temperature = 36.4;
   double humidityLevel = 20;
   bool hasError = false;
 
@@ -24,7 +24,7 @@ class _HealthScreenState extends State<HealthScreen> {
 
       if (data != null && data is Map<dynamic, dynamic>) {
         setState(() {
-          bodyTemperature = double.tryParse(data['temperature'].toString()) ?? bodyTemperature;
+          temperature = double.tryParse(data['temperature'].toString()) ?? temperature;
           humidityLevel = double.tryParse(data['humidity'].toString()) ?? humidityLevel;
           hasError = false;
         });
@@ -78,24 +78,25 @@ class _HealthScreenState extends State<HealthScreen> {
                     style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 20),
+
+                  // Temperature Card
                   _buildHealthCard(
-                    title: "Body Temperature",
-                    value: "${bodyTemperature.toStringAsFixed(1)}°C",
+                    title: "Temperature",
+                    value: "${temperature.toStringAsFixed(1)}°C",
                     icon: Icons.thermostat,
-                    iconColor: Colors.green,
-                    progress: (bodyTemperature - 32) / 8,
-                    safeColor: Colors.green,
-                    dangerColor: Colors.red,
+                    isValueSafe: temperature >= 20 && temperature <= 33,
+                    progress: (temperature - 9) / 31,
                   ),
+
                   const SizedBox(height: 20),
+
+                  // Humidity Card
                   _buildHealthCard(
                     title: "Humidity Level",
-                    value: "${humidityLevel.toStringAsFixed(1)}",
+                    value: "${humidityLevel.toStringAsFixed(1)}%",
                     icon: Icons.water_drop,
-                    iconColor: Colors.blue,
+                    isValueSafe: humidityLevel >= 30 && humidityLevel <= 70,
                     progress: humidityLevel / 100,
-                    safeColor: Colors.blue,
-                    dangerColor: Colors.red,
                   ),
                 ],
               ),
@@ -107,11 +108,13 @@ class _HealthScreenState extends State<HealthScreen> {
     required String title,
     required String value,
     required IconData icon,
-    required Color iconColor,
+    required bool isValueSafe,
     required double progress,
-    required Color safeColor,
-    required Color dangerColor,
   }) {
+    Color safeColor = Colors.green;
+    Color dangerColor = Colors.red;
+    Color iconColor = isValueSafe ? safeColor : dangerColor;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -123,8 +126,7 @@ class _HealthScreenState extends State<HealthScreen> {
         Center(
           child: AnimatedWaveIndicator(
             value: progress.clamp(0.0, 1.0),
-            safeColor: safeColor,
-            dangerColor: dangerColor,
+            fillColor: iconColor,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -145,15 +147,13 @@ class _HealthScreenState extends State<HealthScreen> {
 
 class AnimatedWaveIndicator extends StatefulWidget {
   final double value;
-  final Color safeColor;
-  final Color dangerColor;
+  final Color fillColor;
   final Widget child;
 
   const AnimatedWaveIndicator({
     super.key,
     required this.value,
-    required this.safeColor,
-    required this.dangerColor,
+    required this.fillColor,
     required this.child,
   });
 
@@ -182,7 +182,6 @@ class _AnimatedWaveIndicatorState extends State<AnimatedWaveIndicator> with Sing
   @override
   Widget build(BuildContext context) {
     double screenSize = MediaQuery.of(context).size.width * 0.45;
-    Color fillColor = widget.value >= 0.5 ? widget.safeColor : widget.dangerColor;
 
     return SizedBox(
       height: screenSize,
@@ -210,7 +209,7 @@ class _AnimatedWaveIndicatorState extends State<AnimatedWaveIndicator> with Sing
               animation: _controller,
               builder: (context, child) {
                 return CustomPaint(
-                  painter: WavePainter(widget.value, _controller.value, fillColor),
+                  painter: WavePainter(widget.value, _controller.value, widget.fillColor),
                   child: child,
                 );
               },
