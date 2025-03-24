@@ -1,0 +1,33 @@
+chore/firebase_option
+
+# Please enter the commit message for your changes. Lines starting # with 
+'#' will be ignored, and an empty message aborts the commit. # # 
+interactive rebase in progress; onto 1e0598f # Last command done (1 
+command done): # pick 849405b chore/firebase_option # No commands 
+remaining. # You are currently rebasing branch 'main' on '1e0598f'. # # 
+Changes to be committed: # new file:  .firebaserc # new file:  
+GoogleService-Info.plist # new file:  database.rules.json # new file:  
+dataconnect-generated/dart/default_connector/README.md # new file:  
+dataconnect-generated/dart/default_connector/default.dart # new file:  
+dataconnect/connector/connector.yaml # new file:  
+dataconnect/connector/mutations.gql # new file:  
+dataconnect/connector/queries.gql # new file:  
+dataconnect/dataconnect.yaml # new file:  dataconnect/schema/schema.gql # 
+new file:  firebase.json # modified:  ios/Podfile # modified:  
+ios/Podfile.lock # modified:  ios/Runner.xcodeproj/project.pbxproj # new 
+file:  
+ios/Runner.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved 
+# new file:  ios/Runner.xcworkspace/xcshareddata/swiftpm/Package.resolved 
+# modified:  ios/Runner/AppDelegate.swift # new file:  
+ios/build/XCBuildData/1cda70b1ae3f62f0fe093a79653038e3.xcbuilddata/build-request.json 
+# new file:  
+ios/build/XCBuildData/1cda70b1ae3f62f0fe093a79653038e3.xcbuilddata/description.msgpack 
+# new file:  
+ios/build/XCBuildData/1cda70b1ae3f62f0fe093a79653038e3.xcbuilddata/manifest.json 
+# new file:  
+ios/build/XCBuildData/1cda70b1ae3f62f0fe093a79653038e3.xcbuilddata/target-graph.txt 
+# new file:  
+ios/build/XCBuildData/1cda70b1ae3f62f0fe093a79653038e3.xcbuilddata/task-store.msgpack 
+# modified:  lib/camera_view.dart # modified:  lib/main.dart # modified:  
+lib/swing_control_screen.dart # modified:  pubspec.lock # modified:  
+pubspec.yaml #

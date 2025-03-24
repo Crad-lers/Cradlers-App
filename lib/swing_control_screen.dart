@@ -9,17 +9,30 @@ class SwingControlScreen extends StatefulWidget {
 }
 
 class _SwingControlScreenState extends State<SwingControlScreen> {
-  String swingMode = "Auto"; // Default mode
+  String swingMode = "Auto"; // Default mode is Auto
   bool musicWhileSwinging = false; // Default music OFF
 
   final DatabaseReference _dbRef = FirebaseDatabase.instance.ref("controls");
 
+  @override
+  void initState() {
+    super.initState();
+    // Update Firebase with initial mode and music status
+    _updateFirebase();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
   void _updateFirebase() {
-    _dbRef.set({
-      "swing_status": swingMode,
+    String firebaseCommand = swingMode == "Auto" ? "SWING_AUTO" : swingMode;
+    _dbRef.update({
+      "swing_status": firebaseCommand,  // Send "SWING_AUTO" if Auto is selected
       "music_status": musicWhileSwinging,
     }).then((_) {
-      print("✅ Firebase updated");
+      print("✅ Firebase updated with swing status: $firebaseCommand");
     }).catchError((error) {
       print("❌ Failed to update Firebase: $error");
     });
@@ -32,9 +45,11 @@ class _SwingControlScreenState extends State<SwingControlScreen> {
         padding: const EdgeInsets.symmetric(horizontal: 30),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
             const SizedBox(height: 60),
             Row(
+              mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 IconButton(
                   icon: const Icon(Icons.arrow_back, size: 24),
@@ -42,8 +57,9 @@ class _SwingControlScreenState extends State<SwingControlScreen> {
                     Navigator.pop(context);
                   },
                 ),
+                const SizedBox(width: 10),
                 Image.asset(
-                  'assets/logo.png', // Replace with actual logo path
+                  'assets/logo.png', // Make sure to replace this with your actual logo asset path
                   height: 40,
                 ),
                 const SizedBox(width: 10),
@@ -57,30 +73,22 @@ class _SwingControlScreenState extends State<SwingControlScreen> {
             const Align(
               alignment: Alignment.centerLeft,
               child: Text(
-                "Swing",
+                "Swing Control",
                 style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
               ),
             ),
             const SizedBox(height: 30),
-
-            // Swing Mode Buttons (Auto, ON, OFF)
-            Column(
-              children: [
-                _buildSwingButton("Auto"),
-                const SizedBox(height: 15),
-                _buildSwingButton("ON"),
-                const SizedBox(height: 15),
-                _buildSwingButton("OFF"),
-              ],
-            ),
+            _buildSwingButton("Auto"),
+            const SizedBox(height: 15),
+            _buildSwingButton("ON"),
+            const SizedBox(height: 15),
+            _buildSwingButton("OFF"),
             const SizedBox(height: 40),
             const Text(
               "Music While Swinging",
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 15),
-
-            // Music Toggle Buttons
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -98,40 +106,28 @@ class _SwingControlScreenState extends State<SwingControlScreen> {
   Widget _buildSwingButton(String label) {
     bool isSelected = swingMode == label;
 
-    Color buttonColor = Colors.grey[800]!;
-    Color textColor = Colors.white;
-
-    if (label == "ON" && isSelected) {
-      buttonColor = Colors.green;
-    } else if (label == "OFF" && isSelected) {
-      buttonColor = Colors.red;
-    } else if (label == "Auto" && isSelected) {
-      buttonColor = Colors.blueGrey;
-    }
-
     return GestureDetector(
       onTap: () {
         setState(() {
           swingMode = label;
-          _updateFirebase();  // <- Push to Firebase on change
+          _updateFirebase();  // Push changes to Firebase
         });
       },
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         width: 120,
+        height: 50,
         padding: const EdgeInsets.symmetric(vertical: 12),
         decoration: BoxDecoration(
-          color: buttonColor,
+          color: isSelected ? Colors.blueGrey : Colors.grey[800]!,
           borderRadius: BorderRadius.circular(30),
           boxShadow: isSelected
-              ? [
-            BoxShadow(
-              color: buttonColor.withOpacity(0.6),
-              blurRadius: 10,
-              spreadRadius: 2,
-              offset: const Offset(0, 4),
-            ),
-          ]
+              ? [BoxShadow(
+            color: Colors.blueGrey.withOpacity(0.6),
+            blurRadius: 10,
+            spreadRadius: 2,
+            offset: const Offset(0, 4),
+          )]
               : [],
         ),
         child: Center(
@@ -140,7 +136,7 @@ class _SwingControlScreenState extends State<SwingControlScreen> {
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
-              color: textColor,
+              color: Colors.white,
             ),
           ),
         ),
@@ -155,26 +151,25 @@ class _SwingControlScreenState extends State<SwingControlScreen> {
       onTap: () {
         setState(() {
           musicWhileSwinging = value;
-          _updateFirebase(); // <- Push to Firebase on toggle
+          _updateFirebase(); // Push changes to Firebase
         });
       },
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         width: 80,
+        height: 50,
         padding: const EdgeInsets.symmetric(vertical: 10),
         decoration: BoxDecoration(
           color: isSelected ? (value ? Colors.green : Colors.red) : Colors.white,
           borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: isSelected ? Colors.transparent : Colors.black),
+          border: Border.all(color: isSelected ? Colors.transparent : Colors.grey),
           boxShadow: isSelected
-              ? [
-            BoxShadow(
-              color: (value ? Colors.green : Colors.red).withOpacity(0.5),
-              blurRadius: 10,
-              spreadRadius: 2,
-              offset: const Offset(0, 4),
-            ),
-          ]
+              ? [BoxShadow(
+            color: (value ? Colors.green : Colors.red).withOpacity(0.5),
+            blurRadius: 10,
+            spreadRadius: 2,
+            offset: const Offset(0, 4),
+          )]
               : [],
         ),
         child: Center(
