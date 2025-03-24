@@ -13,7 +13,7 @@ class _HealthScreenState extends State<HealthScreen> {
   final DatabaseReference dbRef = FirebaseDatabase.instance.ref('sensorData');
 
   double bodyTemperature = 36.4;
-  double oxygenLevel = 20;
+  double humidityLevel = 20;
   bool hasError = false;
 
   @override
@@ -25,7 +25,7 @@ class _HealthScreenState extends State<HealthScreen> {
       if (data != null && data is Map<dynamic, dynamic>) {
         setState(() {
           bodyTemperature = double.tryParse(data['temperature'].toString()) ?? bodyTemperature;
-          oxygenLevel = double.tryParse(data['humidity'].toString()) ?? oxygenLevel;
+          humidityLevel = double.tryParse(data['humidity'].toString()) ?? humidityLevel;
           hasError = false;
         });
       } else {
@@ -89,12 +89,12 @@ class _HealthScreenState extends State<HealthScreen> {
                   ),
                   const SizedBox(height: 20),
                   _buildHealthCard(
-                    title: "Oxygen Level",
-                    value: "${oxygenLevel.toStringAsFixed(1)}%",
-                    icon: Icons.bubble_chart,
-                    iconColor: Colors.red,
-                    progress: oxygenLevel / 100,
-                    safeColor: Colors.green,
+                    title: "Humidity Level",
+                    value: "${humidityLevel.toStringAsFixed(1)}",
+                    icon: Icons.water_drop,
+                    iconColor: Colors.blue,
+                    progress: humidityLevel / 100,
+                    safeColor: Colors.blue,
                     dangerColor: Colors.red,
                   ),
                 ],
@@ -196,7 +196,7 @@ class _AnimatedWaveIndicatorState extends State<AnimatedWaveIndicator> with Sing
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               color: Colors.grey[200],
-              boxShadow: [
+              boxShadow: const [
                 BoxShadow(
                   color: Colors.black12,
                   blurRadius: 8,

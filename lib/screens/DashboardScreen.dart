@@ -4,8 +4,12 @@ import 'package:cradlers2/play_music_screen.dart';
 import 'package:cradlers2/settings_page.dart';
 import 'package:cradlers2/swing_control_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_database/firebase_database.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(const CradlersDashboard());
 }
 
@@ -26,16 +30,92 @@ class CradlersDashboard extends StatelessWidget {
   }
 }
 
-class DashboardScreen extends StatelessWidget {
+class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
+
+  @override
+  State<DashboardScreen> createState() => _DashboardScreenState();
+}
+
+class _DashboardScreenState extends State<DashboardScreen> {
+  bool _isCradleOn = false;
+  final DatabaseReference _cradleRef = FirebaseDatabase.instance.ref().child('cradle');
+
+  @override
+  void initState() {
+    super.initState();
+    _listenToCradlePower();
+  }
+
+  void _listenToCradlePower() {
+    _cradleRef.child('power').onValue.listen((event) {
+      final newState = event.snapshot.value == true;
+      setState(() {
+        _isCradleOn = newState;
+      });
+    });
+  }
+
+  void _toggleCradlePower() {
+    final newState = !_isCradleOn;
+    _cradleRef.child('power').set(newState);
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(newState ? 'Cradle turned ON' : 'Cradle turned OFF'),
+        backgroundColor: newState ? Colors.green : Colors.red,
+      ),
+    );
+  }
+
+  List<Map<String, dynamic>> get _buttonData => [
+        {
+          'label': "Health",
+          'icon': Icons.favorite,
+          'onTap': (BuildContext context) => () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => HealthScreen()));
+              },
+        },
+        {
+          'label': "Camera",
+          'icon': Icons.videocam,
+          'onTap': (BuildContext context) => () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => CameraViewPage()));
+              },
+        },
+        {
+          'label': "Play Music",
+          'icon': Icons.music_note,
+          'onTap': (BuildContext context) => () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => PlayMusicScreen()));
+              },
+        },
+        {
+          'label': "Control Limit",
+          'icon': Icons.settings,
+          'onTap': (BuildContext context) => () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => SettingsPage()));
+              },
+        },
+        {
+          'label': "Swing",
+          'icon': Icons.airline_seat_flat,
+          'onTap': (BuildContext context) => () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => const SwingControlScreen()));
+              },
+        },
+        {
+          'label': _isCradleOn ? "Turn Off Cradle" : "Turn On Cradle",
+          'icon': _isCradleOn ? Icons.power_settings_new : Icons.power,
+          'onTap': (BuildContext context) => () => _toggleCradlePower(),
+        },
+      ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea( // Ensures content is within visible screen area
+      body: SafeArea(
         child: Stack(
           children: [
-            // Background Image with Responsiveness
             Positioned.fill(
               child: Image.asset(
                 'assets/cradle.png',
@@ -48,11 +128,8 @@ class DashboardScreen extends StatelessWidget {
                 },
               ),
             ),
-
-            // Content
             Column(
               children: [
-                // Header with Logo and Home Icon
                 Container(
                   padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 15),
                   color: Colors.white.withOpacity(0.9),
@@ -61,28 +138,21 @@ class DashboardScreen extends StatelessWidget {
                     children: [
                       IconButton(
                         icon: const Icon(Icons.home, size: 28),
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
+                        onPressed: () => Navigator.of(context).pop(),
                       ),
                       Column(
                         children: [
-                          Image.asset(
-                            'assets/logo.png',
-                            height: 50,
-                          ),
+                          Image.asset('assets/logo.png', height: 50),
                           const Text(
                             "Cradlers",
                             style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                           ),
                         ],
                       ),
-                      const SizedBox(width: 40), // Placeholder for alignment
+                      const SizedBox(width: 40),
                     ],
                   ),
                 ),
-
-                // Dashboard Header
                 Container(
                   width: double.infinity,
                   padding: const EdgeInsets.all(12),
@@ -94,10 +164,7 @@ class DashboardScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-
                 const SizedBox(height: 20),
-
-                // Responsive Grid of Buttons
                 Expanded(
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -111,12 +178,15 @@ class DashboardScreen extends StatelessWidget {
                             crossAxisSpacing: 20,
                             childAspectRatio: 1,
                           ),
-                          itemCount: 5,
+                          itemCount: _buttonData.length,
                           itemBuilder: (context, index) {
+                            final button = _buttonData[index];
                             return _buildDashboardButton(
-                              _buttonData[index]['label']!,
-                              _buttonData[index]['icon']!,
-                              _buttonData[index]['onTap']!(context),
+                              button['label'],
+                              button['icon'],
+                              button['onTap'](context),
+                              isPowerButton: button['label'].toString().contains("Cradle"),
+                              isOn: _isCradleOn,
                             );
                           },
                         );
@@ -132,15 +202,17 @@ class DashboardScreen extends StatelessWidget {
     );
   }
 
-  // Button Widget with Animation
-  Widget _buildDashboardButton(String label, IconData icon, VoidCallback onTap) {
+  Widget _buildDashboardButton(String label, IconData icon, VoidCallback onTap,
+      {bool isPowerButton = false, bool isOn = false}) {
     return GestureDetector(
       onTap: onTap,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 150),
         curve: Curves.easeInOut,
         decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.95),
+          color: isPowerButton
+              ? (isOn ? Colors.green.shade100 : Colors.red.shade100)
+              : Colors.white.withOpacity(0.95),
           borderRadius: BorderRadius.circular(15),
           boxShadow: [
             BoxShadow(
@@ -154,54 +226,20 @@ class DashboardScreen extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, size: 40, color: Colors.black54),
+            Icon(icon, size: 40, color: isPowerButton ? (isOn ? Colors.green : Colors.red) : Colors.black54),
             const SizedBox(height: 10),
             Text(
               label,
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: isPowerButton ? (isOn ? Colors.green[800] : Colors.red[800]) : Colors.black87,
+              ),
+              textAlign: TextAlign.center,
             ),
           ],
         ),
       ),
     );
   }
-
-  // Button Data
-  static final List<Map<String, dynamic>> _buttonData = [
-    {
-      'label': "Health",
-      'icon': Icons.favorite,
-      'onTap': (BuildContext context) => () {
-        Navigator.push(context, MaterialPageRoute(builder: (context) => HealthScreen()));
-      },
-    },
-    {
-      'label': "Camera",
-      'icon': Icons.videocam,
-      'onTap': (BuildContext context) => () {
-        Navigator.push(context, MaterialPageRoute(builder: (context) => CameraViewPage()));
-      },
-    },
-    {
-      'label': "Play Music",
-      'icon': Icons.music_note,
-      'onTap': (BuildContext context) => () {
-        Navigator.push(context, MaterialPageRoute(builder: (context) => PlayMusicScreen()));
-      },
-    },
-    {
-      'label': "Control Limit",
-      'icon': Icons.settings,
-      'onTap': (BuildContext context) => () {
-        Navigator.push(context, MaterialPageRoute(builder: (context) => SettingsPage()));
-      },
-    },
-    {
-      'label': "Swing",
-      'icon': Icons.airline_seat_flat,
-      'onTap': (BuildContext context) => () {
-        Navigator.push(context, MaterialPageRoute(builder: (context) => const SwingControlScreen()));
-      },
-    },
-  ];
 }
