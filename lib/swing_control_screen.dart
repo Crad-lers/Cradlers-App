@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_database/firebase_database.dart';
 
 class SwingControlScreen extends StatefulWidget {
   const SwingControlScreen({super.key});
@@ -11,6 +12,19 @@ class _SwingControlScreenState extends State<SwingControlScreen> {
   String swingMode = "Auto"; // Default mode
   bool musicWhileSwinging = false; // Default music OFF
 
+  final DatabaseReference _dbRef = FirebaseDatabase.instance.ref("controls");
+
+  void _updateFirebase() {
+    _dbRef.set({
+      "swing_status": swingMode,
+      "music_status": musicWhileSwinging,
+    }).then((_) {
+      print("✅ Firebase updated");
+    }).catchError((error) {
+      print("❌ Failed to update Firebase: $error");
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -20,8 +34,6 @@ class _SwingControlScreenState extends State<SwingControlScreen> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             const SizedBox(height: 60),
-
-            // Logo and Title
             Row(
               children: [
                 IconButton(
@@ -41,10 +53,7 @@ class _SwingControlScreenState extends State<SwingControlScreen> {
                 ),
               ],
             ),
-
             const SizedBox(height: 20),
-
-            // Swing Title
             const Align(
               alignment: Alignment.centerLeft,
               child: Text(
@@ -52,7 +61,6 @@ class _SwingControlScreenState extends State<SwingControlScreen> {
                 style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
               ),
             ),
-
             const SizedBox(height: 30),
 
             // Swing Mode Buttons (Auto, ON, OFF)
@@ -65,15 +73,11 @@ class _SwingControlScreenState extends State<SwingControlScreen> {
                 _buildSwingButton("OFF"),
               ],
             ),
-
             const SizedBox(height: 40),
-
-            // Music While Swinging Title
             const Text(
               "Music While Swinging",
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
-
             const SizedBox(height: 15),
 
             // Music Toggle Buttons
@@ -91,28 +95,25 @@ class _SwingControlScreenState extends State<SwingControlScreen> {
     );
   }
 
-  // Swing Mode Button Widget (Professional Colors)
   Widget _buildSwingButton(String label) {
     bool isSelected = swingMode == label;
 
-    Color buttonColor = Colors.grey[800]!; // Default color
+    Color buttonColor = Colors.grey[800]!;
     Color textColor = Colors.white;
 
     if (label == "ON" && isSelected) {
       buttonColor = Colors.green;
-      textColor = Colors.white;
     } else if (label == "OFF" && isSelected) {
       buttonColor = Colors.red;
-      textColor = Colors.white;
     } else if (label == "Auto" && isSelected) {
       buttonColor = Colors.blueGrey;
-      textColor = Colors.white;
     }
 
     return GestureDetector(
       onTap: () {
         setState(() {
           swingMode = label;
+          _updateFirebase();  // <- Push to Firebase on change
         });
       },
       child: AnimatedContainer(
@@ -147,7 +148,6 @@ class _SwingControlScreenState extends State<SwingControlScreen> {
     );
   }
 
-  // Music Toggle Button Widget (Better Styling)
   Widget _buildMusicToggleButton(String label, bool value) {
     bool isSelected = musicWhileSwinging == value;
 
@@ -155,6 +155,7 @@ class _SwingControlScreenState extends State<SwingControlScreen> {
       onTap: () {
         setState(() {
           musicWhileSwinging = value;
+          _updateFirebase(); // <- Push to Firebase on toggle
         });
       },
       child: AnimatedContainer(

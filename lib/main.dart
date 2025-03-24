@@ -23,14 +23,25 @@ import 'package:google_fonts/google_fonts.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // ✅ Use the generated Firebase config for all platforms (Web, Android, iOS)
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  try {
+    // Initialize Firebase
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+    print("Firebase initialized successfully.");
+  } catch (e) {
+    print("Firebase initialization failed: $e");
+    return; // If Firebase fails to initialize, do not proceed.
+  }
 
   // Load theme preferences
   ThemeProvider themeProvider = ThemeProvider(ThemeData.light());
-  await themeProvider.loadThemeFromPrefs();
+  try {
+    await themeProvider.loadThemeFromPrefs();
+    print("Theme loaded successfully.");
+  } catch (e) {
+    print("Failed to load theme: $e");
+  }
 
   runApp(MyApp(themeProvider: themeProvider));
 }
