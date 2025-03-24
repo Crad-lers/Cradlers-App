@@ -58,9 +58,9 @@ class _SettingsPageState extends State<SettingsPage> {
 
             // Oxygen Level Slider
             _buildSlider(
-              title: "Oxygen level",
-              min: 12,
-              max: 30,
+              title: "Humidity level",
+              min: 20,
+              max: 100,
               value: oxygenLevel,
               unit: "%",
               onChanged: (newValue) {
